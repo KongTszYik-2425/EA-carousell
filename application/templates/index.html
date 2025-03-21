@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<nav class="navbar bg-body-tertiary">
+    <ul class="nav">
+        <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}" alt="Logo" width="200"
+                height="30" class="d-inline-block align-text-top">
+        </a>
+        <li class="nav-item active">
+            <a class="nav-link" href="#">電子3C</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#">男女时尚</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#">名牌精品</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#">服务</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#">汽车</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link container" href="#">
+                <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo" width="20"
+                    height="20" class="flex-column justify-content-center  text-center ">&nbsp;
+                <span class="">所有分类</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav">
+        <li class="nav-item active">
+            <a class="nav-link" href="#"><img src="{{ url_for('static', filename='images/icon-heart.svg') }}" alt="Logo"
+                    width="24" height="24" class="d-inline-block align-text-top">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#"><img src="{{ url_for('static', filename='images/icon-notification.svg') }}"
+                    alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#"><img src="{{ url_for('static', filename='images/icon-msg.svg') }}" alt="Logo"
+                    width="24" height="24" class="d-inline-block align-text-top">
+            </a>
+        </li>
+        <li class="nav-item active">
+            <button type="button" class="btn btn-danger">出售</button>
+        </li>
+    </ul>
+</nav>
+<!--<nav class="navbar bg-body-tertiary">-->
+    <ul class="">
+        <li class="nav-item input-group flex-nowrap" id="productsearch">
+            <span class="input-group-text" id="searchframe"><img
+                    src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo" width="20" height="20"
+                    class="flex-column justify-content-center  text-center "></span>
+            <input type="text"  placeholder="Username" aria-label="Username" id="productsearchinput"
+                aria-describedby="addon-wrapping">
+
+        </li>
+    </ul>
+<script>
+    const input = document.getElementById('productsearchinput');
+        const parentDiv = document.getElementById('productsearch');
+
+        input.addEventListener('focus', () => {
+            parentDiv.classList.add('focused');
+        });
+
+        input.addEventListener('blur', () => {
+            parentDiv.classList.remove('focused');
+        });
+</script>
+{% endblock content %}
