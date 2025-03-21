@@ -3,6 +3,7 @@ FROM python:3.9-slim
 
 # 设置工作目录
 WORKDIR /workspace
+RUN apt-get update && apt-get install -y git
 
 # 暴露 Flask 应用需要的端口
 EXPOSE 5000
