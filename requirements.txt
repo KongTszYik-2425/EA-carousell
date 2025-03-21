@@ -1,2 +1,4 @@
 flask~=3.1.0
-sqlalchemy~=2.0.34
+//sqlalchemy~=2.0.34
+Flask-SQLAlchemy==2.5.1
+Flask-Migrate==3.1.0
