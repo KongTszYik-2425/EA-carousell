@@ -1,15 +1,15 @@
 {
-    "name": "Flask Development",
+    "name": "Flask Development Environment",
     "build": {
         "dockerfile": "Dockerfile",
         "context": ".."
     },
-    "appPort": [5000], // 暴露的端口
+    "appPort": [5000], // 显示 Flask 默认端口
     "settings": {
         "python.pythonPath": "/usr/local/bin/python"
     },
     "extensions": [
         "ms-python.python" // 安装 Python 扩展
     ],
-    "postCreateCommand": "pip install -r requirements.txt" // 创建后执行的命令
+    "postCreateCommand": "pip install -r requirements.txt" // 创建后安装依赖
 }
