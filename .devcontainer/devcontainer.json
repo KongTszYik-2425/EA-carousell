@@ -1,19 +1,15 @@
 {
-    "name": "Flask Development Environment",
-    "image": "mcr.microsoft.com/vscode/devcontainers/python:3.9",
-    "features": {
-        "python": {
-            "version": "3.9",
-            "installPip": true
-        }
+    "name": "Flask Development",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
     },
+    "appPort": [5000], // 暴露的端口
     "settings": {
-        "python.pythonPath": "/usr/local/bin/python",
-        "python.formatting.provider": "black"
+        "python.pythonPath": "/usr/local/bin/python"
     },
     "extensions": [
-        "ms-python.python"
+        "ms-python.python" // 安装 Python 扩展
     ],
-    "postCreateCommand": "pip install -r requirements.txt",
-    "forwardPorts": [5000]
+    "postCreateCommand": "pip install -r requirements.txt" // 创建后执行的命令
 }
