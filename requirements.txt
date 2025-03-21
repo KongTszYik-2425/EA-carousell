@@ -8,3 +8,4 @@ Flask-SQLAlchemy==3.0.2
 Flask-WTF==1.0.1
 GitPython==3.1.29
 Werkzeug==2.2.2
+PyMySQL==1.0.2
