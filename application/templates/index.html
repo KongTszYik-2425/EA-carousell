@@ -51,27 +51,26 @@
         </li>
     </ul>
 </nav>
-<!--<nav class="navbar bg-body-tertiary">-->
-    <ul class="">
-        <li class="nav-item input-group flex-nowrap" id="productsearch">
-            <span class="input-group-text" id="searchframe"><img
-                    src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo" width="20" height="20"
-                    class="flex-column justify-content-center  text-center "></span>
-            <input type="text"  placeholder="Username" aria-label="Username" id="productsearchinput"
-                aria-describedby="addon-wrapping">
+<div class="row">
+    <div class="nav-item input-group flex-nowrap" id="productsearch">
+        <span class="input-group-text" id="searchframe"><img
+                src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo" width="20" height="20"
+                class="flex-column justify-content-center  text-center "></span>
+        <input type="text" placeholder="Username" aria-label="Username" id="productsearchinput"
+            aria-describedby="addon-wrapping">
 
-        </li>
-    </ul>
+    </div>
+</div>
 <script>
     const input = document.getElementById('productsearchinput');
-        const parentDiv = document.getElementById('productsearch');
+    const parentDiv = document.getElementById('productsearch');
 
-        input.addEventListener('focus', () => {
-            parentDiv.classList.add('focused');
-        });
+    input.addEventListener('focus', () => {
+        parentDiv.classList.add('focused');
+    });
 
-        input.addEventListener('blur', () => {
-            parentDiv.classList.remove('focused');
-        });
+    input.addEventListener('blur', () => {
+        parentDiv.classList.remove('focused');
+    });
 </script>
 {% endblock content %}
