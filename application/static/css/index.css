@@ -63,7 +63,7 @@ ul li a{
     margin: 0 auto;
     /* margin-top: 140px; */
     width: 1328px;
-    height: 272px;
+    height: fit-content;
     
 }
 .carousel{
@@ -207,13 +207,38 @@ ul li a{
     position: relative;
     padding: 8px;
 }
+.container{
+    max-width: 1328px;
+    position: relative;
+}
+.align-center{
+    display: flex;
+    align-items: center;
+}
 .cardavatar .content{
     width: 50%;
     white-space: nowrap; /* 不换行 */
     text-overflow: ellipsis; /* 溢出文本显示为省略号 */
     overflow: hidden;
+    line-height: 16px;
 }
 .cardavatar>div{
     flex-shrink :0;
     flex-grow:0;
+}
+.choicenessTitle{
+    font-weight: bold;
+    /* line-height: 5px; */
+}
+.choicenessTime{
+    line-height: 1px;
+}
+.findcard>div{
+    border-radius: 5px;
+    text-align: center;
+    overflow: hidden;
+}
+.findcard img{
+    width: 72px;
+    height: 72px;
 }
