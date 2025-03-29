@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | Carousell{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="small mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">首页</a></li>
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none">智能电视</a></li>
+            <li class="breadcrumb-item active" aria-current="page">电视</li>
+        </ol>
+    </nav>
+
+    <!-- 产品主要信息 -->
+    <div class="row g-4">
+        <!-- 产品图片 -->
+        <div class="col-lg-7">
+            <div id="productCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div class="carousel-inner rounded border">
+                    {% for image in product.images %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <img src="{{ url_for('static', filename=image.replace('static/', '')) }}" class="d-block w-100" alt="{{ product.name }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            
+            <!-- 缩略图 -->
+            <div class="row g-2">
+                {% for image in product.images %}
+                <div class="col-3">
+                    <img src="{{ url_for('static', filename=image.replace('static/', '')) }}" class="img-thumbnail" data-bs-target="#productCarousel" data-bs-slide-to="{{ loop.index0 }}" alt="">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- 产品信息 -->
+        <div class="col-lg-5">
+            <h1 class="h5 mb-2">{{ product.name }}</h1>
+            <h2 class="h4 text-danger mb-3">{{ product.price }}</h2>
+            
+            <!-- 卖家信息 -->
+            <div class="d-flex align-items-center mb-4">
+                <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
+                <div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">{{ product.seller.name }}</span>
+                        <div class="text-warning small">
+                            {% for i in range(5) %}
+                            <i class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
+                            {% endfor %}
+                            <span class="text-muted">({{ product.seller.reviews }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 购买按钮 -->
+            <div class="d-grid mb-4">
+                <button class="btn btn-danger">购入</button>
+            </div>
+            
+            <!-- 收藏按钮 -->
+            <div class="d-flex justify-content-between mb-4">
+                <button class="btn btn-outline-secondary w-100">收藏</button>
+            </div>
+            
+            <!-- 其他信息 -->
+            <div class="mb-4">
+                <h3 class="h6 mb-3">其他信息</h3>
+                <table class="table table-sm">
+                    <tbody>
+                        {% for key, value in product.specs.items() %}
+                        <tr>
+                            <td class="text-muted" style="width: 30%;">{{ key }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 商品描述 -->
+            <div class="mb-4">
+                <h3 class="h6 mb-3">商品描述</h3>
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <!-- 商品地址 -->
+            <div class="mb-4">
+                <h3 class="h6 mb-3">商品地址</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt text-danger me-2"></i>{{ product.location }}</li>
+                    <li class="mb-2"><i class="fas fa-map text-danger me-2"></i>{{ product.address }}</li>
+                    <li><i class="fas fa-phone text-danger me-2"></i>{{ product.contact }}</li>
+                </ul>
+            </div>
+            
+            <!-- 交易方式 -->
+            <div class="mb-4">
+                <h3 class="h6 mb-3">交易方式</h3>
+                <div class="row">
+                    {% for option in product.delivery_options %}
+                    <div class="col-6">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="fas {% if option.name == '自取' %}fa-store{% else %}fa-truck{% endif %} text-primary me-2"></i>{{ option.name }}</span>
+                            <span>{{ option.price }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 评价 -->
+    <div class="card mt-5">
+        <div class="card-header bg-white">
+            <h3 class="h5 mb-0">浏览买家评价</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    {% for review in product.reviews %}
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px; background-color: {{ review.avatar_color }};">
+                                {{ review.user[0] | upper }}
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <div class="d-flex align-items-center mb-1">
+                                <h6 class="mb-0 me-2">{{ review.user }}</h6>
+                                <small class="text-muted">{{ review.time }}</small>
+                            </div>
+                            <div class="text-warning mb-2">
+                                {% for i in range(review.rating) %}
+                                <i class="fas fa-star small"></i>
+                                {% endfor %}
+                            </div>
+                            <p class="mb-0 small">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <a href="#" class="btn btn-outline-primary btn-sm">查看所有评价 <i class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+    </div>
+    
+    <!-- 相关推荐 -->
+    <div class="mt-5">
+        <h3 class="h5 mb-4">其他人也在搜寻</h3>
+        <div class="row">
+            {% for tag in related_tags %}
+            <div class="col-auto mb-2">
+                <a href="#" class="btn btn-sm btn-outline-secondary">{{ tag }}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- 相关产品 -->
+    <div class="mt-4">
+        <div class="row">
+            {% for item in related_products %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="{{ url_for('static', filename=item.image.replace('static/', '')) }}" class="card-img-top" alt="{{ item.name }}">
+                    <div class="card-body">
+                        <h6 class="card-title small">{{ item.name }}</h6>
+                        <p class="card-text text-danger">{{ item.price }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 自定义样式 -->
+<style>
+.carousel-item img {
+    height: 400px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+}
+.img-thumbnail {
+    cursor: pointer;
+    height: 80px;
+    object-fit: cover;
+}
+.table td {
+    padding: 0.5rem;
+    border-color: #f0f0f0;
+}
+</style>
+{% endblock %}

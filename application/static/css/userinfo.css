@@ -1,0 +1,37 @@
+/* 自定义样式 */
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+
+.card {
+    border-radius: 8px;
+    transition: transform 0.2s;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
+}
+
+.nav-tabs .nav-link.active {
+    color: #dc3545;
+    border-bottom: 2px solid #dc3545;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+}
+
+.btn-outline-dark:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+}
