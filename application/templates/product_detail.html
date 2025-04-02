@@ -3,78 +3,56 @@
 {% block title %}{{ product.name }} | Carousell{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}">
 <div class="container py-4">
     <!-- 面包屑导航 -->
-    <nav aria-label="breadcrumb" class="small mb-3">
-        <ol class="breadcrumb mb-0">
+    <nav aria-label="breadcrumb" class="small mb-3" >
+        <ol class="breadcrumb mb-0" style="background-color: transparent;">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">首页</a></li>
             <li class="breadcrumb-item"><a href="#" class="text-decoration-none">智能电视</a></li>
             <li class="breadcrumb-item active" aria-current="page">电视</li>
         </ol>
     </nav>
 
+    <div class=" carouselContainer d-none d-xl-block">
+        <div id="carousel" class="carousel slide" data-ride="carousel">
+            <div class="carouselinner row">
+                <div class="carouselitem">
+                    <img src="https://media.karousell.com/media/photos/special-collection/2024/11/21/210b345029cce775_(1500,610)"
+                        style="height: 263.415px; width: 648px;">
+                </div>
+                <div class="carouselitem">
+                    <img src="https://media.karousell.com/media/photos/special-collection/2025/03/10/6436b138c986cc47_(1500,610)"
+                        style="height: 263.415px; width: 648px;">
+    
+                </div>
+                <div class="carouselitem">
+                    <img src="https://media.karousell.com/media/photos/special-collection/2024/08/22/2ba8f8c603f2e466_(1500,610)"
+                        style="height: 263.415px; width: 648px;">
+                </div>
+                <div class="carouselitem">
+                    <img src="https://media.karousell.com/media/photos/special-collection/2025/02/22/7c877230b46aa447_(1500,610)"
+                        style="height: 263.415px; width: 648px;">
+                </div>
+            </div>
+    
+        </div>
+        <a class="carousel-control-prev carouselbutton" role="button" data-slide="prev" onclick="carouselscroll(-1)">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next carouselbutton" role="button" data-slide="next" onclick="carouselscroll(1)">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
     <!-- 产品主要信息 -->
     <div class="row g-4">
-        <!-- 产品图片 -->
-        <div class="col-lg-7">
-            <div id="productCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-                <div class="carousel-inner rounded border">
-                    {% for image in product.images %}
-                    <div class="carousel-item {% if loop.first %}active{% endif %}">
-                        <img src="{{ url_for('static', filename=image.replace('static/', '')) }}" class="d-block w-100" alt="{{ product.name }}">
-                    </div>
-                    {% endfor %}
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-            
-            <!-- 缩略图 -->
-            <div class="row g-2">
-                {% for image in product.images %}
-                <div class="col-3">
-                    <img src="{{ url_for('static', filename=image.replace('static/', '')) }}" class="img-thumbnail" data-bs-target="#productCarousel" data-bs-slide-to="{{ loop.index0 }}" alt="">
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <!-- 产品信息 -->
-        <div class="col-lg-5">
+        <div class="col-lg-8">
             <h1 class="h5 mb-2">{{ product.name }}</h1>
             <h2 class="h4 text-danger mb-3">{{ product.price }}</h2>
             
-            <!-- 卖家信息 -->
-            <div class="d-flex align-items-center mb-4">
-                <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
-                <div>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2">{{ product.seller.name }}</span>
-                        <div class="text-warning small">
-                            {% for i in range(5) %}
-                            <i class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
-                            {% endfor %}
-                            <span class="text-muted">({{ product.seller.reviews }})</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
-            <!-- 购买按钮 -->
-            <div class="d-grid mb-4">
-                <button class="btn btn-danger">购入</button>
-            </div>
-            
-            <!-- 收藏按钮 -->
-            <div class="d-flex justify-content-between mb-4">
-                <button class="btn btn-outline-secondary w-100">收藏</button>
-            </div>
             
             <!-- 其他信息 -->
             <div class="mb-4">
@@ -122,6 +100,37 @@
                 </div>
             </div>
         </div>
+        <!-- 产品图片 -->
+        <div class="col-lg-4" class="seller">
+            <!-- 卖家信息 -->
+            <div class="d-flex align-items-center mb-4">
+                <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
+                <div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">{{ product.seller.name }}</span>
+                        <div class="text-warning small">
+                            {% for i in range(5) %}
+                            <i class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
+                            {% endfor %}
+                            <span class="text-muted">({{ product.seller.reviews }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 购买按钮 -->
+            <div class="d-grid mb-4">
+                <button class="btn btn-danger">购入</button>
+            </div>
+            
+            <!-- 收藏按钮 -->
+            <div class="d-flex justify-content-between mb-4">
+                <button class="btn btn-outline-secondary w-100">收藏</button>
+            </div>
+        </div>
+        
+        <!-- 产品信息 -->
+        
     </div>
     
     <!-- 评价 -->
@@ -207,4 +216,24 @@
     border-color: #f0f0f0;
 }
 </style>
+<script>
+
+    $(document).ready(function () {
+        widthOfCarousel = $('#carousel .carouselinner').children().length * 664 + 20
+        $('#carousel .carouselinner').css('width', `${widthOfCarousel}px`);
+    })
+
+
+    //轮播图
+    var currentPictureNo = 0;
+    function carouselscroll(param) {
+        if (parseInt(param) == -1) {
+            currentPictureNo = currentPictureNo > 0 ? currentPictureNo - 1 : currentPictureNo;
+        } else {
+            currentPictureNo = currentPictureNo < $('#carousel .carouselinner').children().length - 2 ? currentPictureNo + 1 : currentPictureNo;
+        }
+        console.log(currentPictureNo);
+        $('#carousel .carouselinner').css('left', `${currentPictureNo * -664}px`)
+    }
+</script>
 {% endblock %}
