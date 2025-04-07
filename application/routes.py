@@ -1,6 +1,6 @@
 from application import app
-from flask import render_template, redirect, flash, url_for, request
-
+from flask import render_template, redirect, flash, url_for, request, url_for, jsonify
+from application.models import *
 @app.route("/")
 @app.route("/index")
 def index():
@@ -157,4 +157,65 @@ def sell():
         return redirect(url_for('index'))
     
     return render_template('sell.html')
+
+
+users = {
+    "user1": "password1",
+    "user2": "password2"
+}
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username in users and users[username] == password:
+        return f"欢迎，{username}！登录成功。"
+    else:
+        return "账号或密码错误，请重试。"
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    # 确保非必填字段在未传入时为 None
+    firstName = request.form.get('firstName') or None
+    lastName = request.form.get('lastName') or None
+    gender = request.form.get('gender') or None
+    description = request.form.get('description') or None
+    businessNo = request.form.get('businessNo') or None
+    startBusinessTime = request.form.get('startBusinessTime') or None
+    endBusinessTime = request.form.get('endBusinessTime') or None
+    website = request.form.get('website') or None
+    email = request.form.get('email') or None
+    bornDate = request.form.get('bornDate') or None
+    # 这些是必填字段，确保有值
+    marketPlace = request.form.get('marketPlace') or None
+    district = request.form.get('district') or None
+    city = request.form.get('city') or None
+
+    existing_user = Customer.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"status": "error", "message": "用户名已存在，请选择其他用户名。"})
+    else:
+        new_user = Customer(
+            username=username,
+            password=password,
+            firstName=firstName,
+            lastName=lastName,
+            gender=gender,
+            description=description,
+            businessNo=businessNo,
+            startBusinessTime=startBusinessTime,
+            endBusinessTime=endBusinessTime,
+            marketPlace=marketPlace,
+            district=district,
+            city=city,
+            website=website,
+            email=email,
+            bornDate=bornDate
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "注册成功，请前往登录。"})
 

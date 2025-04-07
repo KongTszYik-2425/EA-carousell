@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}">
 <div class="container py-4">
     <!-- 面包屑导航 -->
-    <nav aria-label="breadcrumb" class="small mb-3" >
+    <nav aria-label="breadcrumb" class="small mb-3">
         <ol class="breadcrumb mb-0" style="background-color: transparent;">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">首页</a></li>
             <li class="breadcrumb-item"><a href="#" class="text-decoration-none">智能电视</a></li>
@@ -24,7 +24,7 @@
                 <div class="carouselitem">
                     <img src="https://media.karousell.com/media/photos/special-collection/2025/03/10/6436b138c986cc47_(1500,610)"
                         style="height: 263.415px; width: 648px;">
-    
+
                 </div>
                 <div class="carouselitem">
                     <img src="https://media.karousell.com/media/photos/special-collection/2024/08/22/2ba8f8c603f2e466_(1500,610)"
@@ -35,7 +35,7 @@
                         style="height: 263.415px; width: 648px;">
                 </div>
             </div>
-    
+
         </div>
         <a class="carousel-control-prev carouselbutton" role="button" data-slide="prev" onclick="carouselscroll(-1)">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,13 +47,13 @@
         </a>
     </div>
     <!-- 产品主要信息 -->
-    <div class="row g-4">
+    <div class="row g-4" style="margin-top: 20px;">
         <div class="col-lg-8">
-            <h1 class="h5 mb-2">{{ product.name }}</h1>
+            <h1 class="h3 mb-2">{{ product.name }}</h1>
             <h2 class="h4 text-danger mb-3">{{ product.price }}</h2>
-            
-            
-            
+            <hr>
+
+
             <!-- 其他信息 -->
             <div class="mb-4">
                 <h3 class="h6 mb-3">其他信息</h3>
@@ -68,31 +68,33 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- 商品描述 -->
             <div class="mb-4">
-                <h3 class="h6 mb-3">商品描述</h3>
+                <h3 class="h5 mb-3">商品描述</h3>
                 <p>{{ product.description }}</p>
             </div>
-            
+
             <!-- 商品地址 -->
             <div class="mb-4">
-                <h3 class="h6 mb-3">商品地址</h3>
+                <h3 class="h5 mb-3">商品地址</h3>
                 <ul class="list-unstyled">
                     <li class="mb-2"><i class="fas fa-map-marker-alt text-danger me-2"></i>{{ product.location }}</li>
                     <li class="mb-2"><i class="fas fa-map text-danger me-2"></i>{{ product.address }}</li>
                     <li><i class="fas fa-phone text-danger me-2"></i>{{ product.contact }}</li>
                 </ul>
             </div>
-            
+            <hr>
             <!-- 交易方式 -->
             <div class="mb-4">
-                <h3 class="h6 mb-3">交易方式</h3>
+                <h3 class="h5 mb-3">交易方式</h3>
                 <div class="row">
                     {% for option in product.delivery_options %}
                     <div class="col-6">
                         <div class="d-flex justify-content-between mb-2">
-                            <span><i class="fas {% if option.name == '自取' %}fa-store{% else %}fa-truck{% endif %} text-primary me-2"></i>{{ option.name }}</span>
+                            <span><i
+                                    class="fas {% if option.name == '自取' %}fa-store{% else %}fa-truck{% endif %} text-primary me-2"></i>{{
+                                option.name }}</span>
                             <span>{{ option.price }}</span>
                         </div>
                     </div>
@@ -101,38 +103,42 @@
             </div>
         </div>
         <!-- 产品图片 -->
-        <div class="col-lg-4" class="seller">
-            <!-- 卖家信息 -->
-            <div class="d-flex align-items-center mb-4">
-                <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}" class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
-                <div>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2">{{ product.seller.name }}</span>
-                        <div class="text-warning small">
-                            {% for i in range(5) %}
-                            <i class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
-                            {% endfor %}
-                            <span class="text-muted">({{ product.seller.reviews }})</span>
+        <div class="col-lg-4" style="padding-left: 20px;padding-right: 20px;position: relative;">
+            <div class="seller">
+                <!-- 卖家信息 -->
+                <div class="d-flex align-items-center mb-4">
+                    <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}"
+                        class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
+                    <div>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">{{ product.seller.name }}</span>
+                            <div class="text-warning small">
+                                {% for i in range(5) %}
+                                <i
+                                    class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
+                                {% endfor %}
+                                <span class="text-muted">({{ product.seller.reviews }})</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             
             <!-- 购买按钮 -->
             <div class="d-grid mb-4">
                 <button class="btn btn-danger">购入</button>
             </div>
-            
+
             <!-- 收藏按钮 -->
             <div class="d-flex justify-content-between mb-4">
                 <button class="btn btn-outline-secondary w-100">收藏</button>
             </div>
         </div>
-        
+        </div>
+
         <!-- 产品信息 -->
-        
+
     </div>
-    
+
     <!-- 评价 -->
     <div class="card mt-5">
         <div class="card-header bg-white">
@@ -144,7 +150,8 @@
                     {% for review in product.reviews %}
                     <div class="d-flex mb-4">
                         <div class="flex-shrink-0">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px; background-color: {{ review.avatar_color }};">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white"
+                                style="width: 40px; height: 40px; background-color: {{ review.avatar_color }};">
                                 {{ review.user[0] | upper }}
                             </div>
                         </div>
@@ -164,11 +171,11 @@
                     {% endfor %}
                 </div>
             </div>
-            
+
             <a href="#" class="btn btn-outline-primary btn-sm">查看所有评价 <i class="fas fa-chevron-right ms-1"></i></a>
         </div>
     </div>
-    
+
     <!-- 相关推荐 -->
     <div class="mt-5">
         <h3 class="h5 mb-4">其他人也在搜寻</h3>
@@ -180,14 +187,15 @@
             {% endfor %}
         </div>
     </div>
-    
+
     <!-- 相关产品 -->
     <div class="mt-4">
         <div class="row">
             {% for item in related_products %}
             <div class="col-md-3 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
-                    <img src="{{ url_for('static', filename=item.image.replace('static/', '')) }}" class="card-img-top" alt="{{ item.name }}">
+                    <img src="{{ url_for('static', filename=item.image.replace('static/', '')) }}" class="card-img-top"
+                        alt="{{ item.name }}">
                     <div class="card-body">
                         <h6 class="card-title small">{{ item.name }}</h6>
                         <p class="card-text text-danger">{{ item.price }}</p>
@@ -201,20 +209,22 @@
 
 <!-- 自定义样式 -->
 <style>
-.carousel-item img {
-    height: 400px;
-    object-fit: contain;
-    background-color: #f8f9fa;
-}
-.img-thumbnail {
-    cursor: pointer;
-    height: 80px;
-    object-fit: cover;
-}
-.table td {
-    padding: 0.5rem;
-    border-color: #f0f0f0;
-}
+    .carousel-item img {
+        height: 400px;
+        object-fit: contain;
+        background-color: #f8f9fa;
+    }
+
+    .img-thumbnail {
+        cursor: pointer;
+        height: 80px;
+        object-fit: cover;
+    }
+
+    .table td {
+        padding: 0.5rem;
+        border-color: #f0f0f0;
+    }
 </style>
 <script>
 

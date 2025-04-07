@@ -440,35 +440,9 @@
 
   
   <!-- Modal -->
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title d-flex" id="registerModalLabel"><img src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}" alt="Logo"
-            width="200" height="30" class="d-inline-block align-text-top"></h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <h5>建立账号</h5>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-</div>
+
 <script>
-    const input = document.getElementById('productsearchinput');
-    const parentDiv = document.getElementById('productsearch');
-
-    input.addEventListener('focus', () => {
-        parentDiv.classList.add('focused');
-    });
-
-    input.addEventListener('blur', () => {
-        parentDiv.classList.remove('focused');
-    });
+    
 
     $(document).ready(function () {
         widthOfCarousel = $('#carousel .carouselinner').children().length * 664 + 20

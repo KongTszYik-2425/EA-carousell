@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 </head>
+
 <body>
 
     <div class="">
@@ -17,8 +19,8 @@
                     <nav class="navbar bg-body-tertiary">
                         <ul class="nav">
                             <a class="navbar-brand" href="#">
-                                <img src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}" alt="Logo"
-                                    width="200" height="30" class="d-inline-block align-text-top">
+                                <img src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}"
+                                    alt="Logo" width="200" height="30" class="d-inline-block align-text-top">
                             </a>
                             <li class="nav-item active d-none d-xl-block">
                                 <a class="nav-link" href="#">電子3C</a>
@@ -38,7 +40,8 @@
                             <li class="nav-item active d-none d-md-block">
                                 <a class="nav-link container" href="#">
                                     <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo"
-                                        width="20" height="20" class="flex-column justify-content-center  text-center ">&nbsp;
+                                        width="20" height="20"
+                                        class="flex-column justify-content-center  text-center ">&nbsp;
                                     <span class="">所有分类</span>
                                 </a>
                             </li>
@@ -46,19 +49,20 @@
                         <ul class="nav logined-nav d-none">
                             <li class="nav-item active">
                                 <a class="nav-link" href="#"><img
-                                        src="{{ url_for('static', filename='images/icon-heart.svg') }}" alt="Logo" width="24"
-                                        height="24" class="d-inline-block align-text-top">
-                                </a>
-                            </li>
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#"><img
-                                        src="{{ url_for('static', filename='images/icon-notification.svg') }}" alt="Logo"
+                                        src="{{ url_for('static', filename='images/icon-heart.svg') }}" alt="Logo"
                                         width="24" height="24" class="d-inline-block align-text-top">
                                 </a>
                             </li>
                             <li class="nav-item active">
-                                <a class="nav-link" href="#"><img src="{{ url_for('static', filename='images/icon-msg.svg') }}"
+                                <a class="nav-link" href="#"><img
+                                        src="{{ url_for('static', filename='images/icon-notification.svg') }}"
                                         alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
+                                </a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#"><img
+                                        src="{{ url_for('static', filename='images/icon-msg.svg') }}" alt="Logo"
+                                        width="24" height="24" class="d-inline-block align-text-top">
                                 </a>
                             </li>
                             <li class="nav-item active d-none d-sm-block">
@@ -86,16 +90,17 @@
                     <div class="row justify-content-around">
                         <div class="nav-item input-group flex-nowrap col-12 col-xl-11" id="productsearch">
                             <span class="input-group-text" id="searchframe"><img
-                                    src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo" width="20"
-                                    height="20" class="flex-column justify-content-center  text-center "></span>
+                                    src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo"
+                                    width="20" height="20"
+                                    class="flex-column justify-content-center  text-center "></span>
                             <input type="text" placeholder="Username" aria-label="Username" id="productsearchinput"
                                 aria-describedby="addon-wrapping">
                         </div>
-        
+
                         <div class="nav-item input-group flex-nowrap  d-none d-xl-block col-xl-1">
                             <button type="button" class="btn btn-secondary">搜尋</button>
                         </div>
-        
+
                     </div>
                 </div>
             </div>
@@ -103,10 +108,44 @@
         <div style="margin-top: 140px;"></div>
         {% block content %}{% endblock %}
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title d-flex" id="registerModalLabel"><img
+                            src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}" alt="Logo"
+                            width="200" height="30" class="d-inline-block align-text-top"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">建立账号</h5>
+                    <form id="registerFormData">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="regUsername"
+                                placeholder="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="regEmail" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Password</label>
+                            <input type="text" class="form-control" id="regPassword" placeholder="">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="registerButton">注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const input = document.getElementById('productsearchinput');
     const parentDiv = document.getElementById('productsearch');
@@ -118,4 +157,38 @@
     input.addEventListener('blur', () => {
         parentDiv.classList.remove('focused');
     });
+
+            $('#showRegister').click(function (e) {
+                e.preventDefault();
+                $('#registerForm').show();
+            });
+
+            $('#hideRegister').click(function (e) {
+                e.preventDefault();
+                $('#registerForm').hide();
+            });
+
+            $('#registerButton').click(function () {
+                alert("hello")
+                const username = $('#regUsername').val();
+                const password = $('#regPassword').val();
+                const email = $('#regEmail').val();
+
+                $.ajax({
+                    url: '/register',
+                    method: 'POST',
+                    data: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+                    contentType: 'application/x-www-form-urlencoded',
+                    dataType: 'json',
+                    success: function (data) {
+                        alert(data.message);
+                        if (data.status === "success") {
+                            $('#registerForm').hide();
+                        }
+                    },
+                    error: function () {
+                        alert('发生错误，请稍后重试。');
+                    }
+                });
+            });
 </script>
