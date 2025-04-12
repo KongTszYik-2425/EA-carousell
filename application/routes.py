@@ -1,24 +1,32 @@
 from application import app
 from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session
 from application.models import *
+from flask import request, redirect, url_for, flash, make_response
+from application.models import Customer
+from flask_jwt_extended import create_access_token, jwt_required,jwt_required, get_jwt_identity, verify_jwt_in_request,decode_token
+
 @app.route("/")
 @app.route("/index")
-def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-
-    return render_template("index.html", title="Home", posts=posts)
+# @jwt_required(optional=True) 
+def index():  # 移除@jwt_required装饰器
+    current_user_id = request.args.get("token")
+    if current_user_id:
+        decoded_token = decode_token(current_user_id)
+        current_user_id = decoded_token['sub']
+    user_data = None
+    if current_user_id:
+        user = Customer.query.get(current_user_id)
+        if user:
+            user_data = {
+                'custID': user.custID,
+                'username': user.username
+            }
+    return render_template("index.html", title="Home",User=user_data)
 
 @app.route('/userinfo')
+@jwt_required(optional=False)  # 必须验证Token
 def userinfo():
+    current_user_id = get_jwt_identity()  # 获取Token中的用户ID
     user = {
         'username': '人平',
         'status': '不活跃',
@@ -172,8 +180,13 @@ def login():
     customer = Customer.query.filter_by(username=username).first()
 
     if customer and customer.password == password:
-        session['custID'] = customer.custID
-        return jsonify({"message": "登录成功"}), 200
+        access_token = create_access_token(identity=customer.custID)
+        return jsonify({
+            "message": "登錄成功",
+            "access_token": access_token,
+            "expires_in": 3600  # 有效期秒數
+        }), 200
+        
     else:
         return jsonify({"message": "用户名或密码错误"}), 401
 
@@ -222,4 +235,32 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         return jsonify({"status": "success", "message": "注册成功，请前往登录。"})
+
+
+@app.route('/logout')
+def logout():
+    pass
+
+
+# 在路由定义前添加
+@app.before_request
+def check_token():
+    # 排除不需要验证的路由
+    excluded_routes = ['login', 'register', 'static']
+    if request.endpoint in excluded_routes:
+        return
+    
+    try:
+        # 仅在存在Authorization头时验证Token
+        if 'Authorization' in request.headers:
+            verify_jwt_in_request()
+    except Exception as e:
+        return jsonify({"message": "Token无效或已过期"}), 401
+
+
+@app.route('/auth/check')
+@jwt_required()
+def check_auth():
+    # 只要JWT中间件验证通过即返回成功
+    return jsonify({"status": "valid"}), 200
 

@@ -31,15 +31,6 @@ class Customer(db.Model):
     currency = db.Column(db.Float, nullable=False, default=0, comment='现金')
     password = db.Column(db.String(100), nullable=False)
 
-    # def password(self, password):
-    #     md_pwd = hashlib.md5().update(password.encode('utf-8')).hexdigest()  # 单向加密
-    #     self.password = md_pwd
-    #
-    # # 构造函数
-    # def __init__(self, username, email):
-    #     self.username = username
-    #     self.email = email
-
     # 返回函数
     def __repr__(self):
         return f'<Customer {self.username}>'
