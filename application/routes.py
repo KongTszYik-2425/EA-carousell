@@ -1,5 +1,5 @@
 from application import app
-from flask import render_template, redirect, flash, url_for, request, url_for, jsonify
+from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session
 from application.models import *
 @app.route("/")
 @app.route("/index")
@@ -159,19 +159,23 @@ def sell():
     return render_template('sell.html')
 
 
-users = {
-    "user1": "password1",
-    "user2": "password2"
-}
+
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
-    if username in users and users[username] == password:
-        return f"欢迎，{username}！登录成功。"
+    if not username or not password:
+        return jsonify({"message": "用户名和密码是必需的"}), 400
+
+    customer = Customer.query.filter_by(username=username).first()
+
+    if customer and customer.password == password:
+        session['custID'] = customer.custID
+        return jsonify({"message": "登录成功"}), 200
     else:
-        return "账号或密码错误，请重试。"
+        return jsonify({"message": "用户名或密码错误"}), 401
 
 
 @app.route('/register', methods=['POST'])
