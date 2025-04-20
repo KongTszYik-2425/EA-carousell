@@ -1,27 +1,16 @@
 from application import app
 from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session
-from application.models import *
-from flask import request, redirect, url_for, flash, make_response
 from application.models import Customer
+from flask import request, redirect, url_for, flash, make_response
 from flask_jwt_extended import create_access_token, jwt_required,jwt_required, get_jwt_identity, verify_jwt_in_request,decode_token
+from application.util import *  
 
 @app.route("/")
 @app.route("/index")
-# @jwt_required(optional=True) 
-def index():  # 移除@jwt_required装饰器
+def index(): 
     current_user_id = request.args.get("token")
-    if current_user_id:
-        decoded_token = decode_token(current_user_id)
-        current_user_id = decoded_token['sub']
-    user_data = None
-    if current_user_id:
-        user = Customer.query.get(current_user_id)
-        if user:
-            user_data = {
-                'custID': user.custID,
-                'username': user.username
-            }
-    return render_template("index.html", title="Home",User=user_data)
+    user_data= decodeCustomer(current_user_id)
+    return render_template("index.html/", title="Home",User=user_data)
 
 @app.route('/userinfo')
 @jwt_required(optional=False)  # 必须验证Token
@@ -150,8 +139,11 @@ def home():
             ]
         }
     ]
+
+    current_user_id = request.args.get("token")
+    user_data= decodeCustomer(current_user_id)
     
-    return render_template('home.html', categories=categories, brands=brands, hot_items=hot_items, zones=zones)
+    return render_template('home.html', categories=categories, brands=brands, hot_items=hot_items, zones=zones,User=user_data)
 
 @app.route('/sell', methods=['GET', 'POST'])
 def sell():
@@ -242,20 +234,7 @@ def logout():
     pass
 
 
-# 在路由定义前添加
-@app.before_request
-def check_token():
-    # 排除不需要验证的路由
-    excluded_routes = ['login', 'register', 'static']
-    if request.endpoint in excluded_routes:
-        return
-    
-    try:
-        # 仅在存在Authorization头时验证Token
-        if 'Authorization' in request.headers:
-            verify_jwt_in_request()
-    except Exception as e:
-        return jsonify({"message": "Token无效或已过期"}), 401
+
 
 
 @app.route('/auth/check')

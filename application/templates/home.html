@@ -3,14 +3,15 @@
 {% block title %}Home | Carousell{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 <div class="container py-4">
     <!-- Banner -->
-    <div class="bg-light p-5 rounded mb-4 text-center">
-        <h1 class="display-5">Every kinda thing, for every kinda person</h1>
-        <p class="lead">探索手机、电脑、家电、音响、游戏机等商品</p>
+    <div class="bg-light p-5 rounded mb-4 text-center themebanner">
+        <h1 class="display-5 text-light">Every kinda thing, for every kinda person</h1>
+        <p class="lead text-light">探索手机、电脑、家电、音响、游戏机等商品</p>
         <form class="d-flex justify-content-center mt-3">
             <input class="form-control me-2 w-50" type="search" placeholder="搜索商品" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">搜索</button>
+            <button class="btn btn-info" type="submit">搜索</button>
         </form>
     </div>
 
@@ -18,8 +19,8 @@
     <h2 class="h4 mb-4">Shop by category</h2>
     <div class="row mb-4">
         {% for category in categories %}
-        <div class="col-2 text-center">
-            <img src="{{ url_for('static', filename=category.icon.replace('static/', '')) }}" class="img-fluid mb-2" alt="{{ category.name }}">
+        <div class="col text-center">
+            <img src="https://sl3-cdn.karousell.com/homescreens/main/sg_web_homepage/electronics/categories/electronics_mobilephones.png" class="img-fluid mb-2" alt="{{ category.name }}" width="240px" height="240px">
             <p class="small">{{ category.name }}</p>
         </div>
         {% endfor %}
@@ -27,9 +28,12 @@
 
     <!-- Brands -->
     <h2 class="h4 mb-4">Popular Brands</h2>
-    <div class="d-flex justify-content-between mb-4">
+    <div class="row mb-4">
         {% for brand in brands %}
-        <span class="badge bg-light text-dark">{{ brand }}</span>
+        <div class="col text-center">
+            <img src="https://sl3-cdn.karousell.com/homescreens/main/sg_web_homepage/electronics/brands/apple.png" class="img-fluid mb-2"  width="80px" height="80px">
+            <p class="small">{{ brand }}</p>
+        </div>
         {% endfor %}
     </div>
 
