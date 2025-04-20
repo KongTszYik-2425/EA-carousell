@@ -243,3 +243,71 @@ def check_auth():
     # 只要JWT中间件验证通过即返回成功
     return jsonify({"status": "valid"}), 200
 
+
+# 后台管理路由
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    # 模拟数据
+    recent_users = [
+        {
+            'username': 'Isabella Christensen',
+            'description': 'Lorem ipsum is simply...',
+            'register_time': '11 MAY 12:56',
+            'status': 'active',
+            'color': '#4e73df'
+        },
+        {
+            'username': 'Michelle Anderson',
+            'description': 'Lorem ipsum is simply text of...',
+            'register_time': '11 MAY 10:25',
+            'status': 'inactive',
+            'color': '#1cc88a'
+        },
+        {
+            'username': 'Karla Sorensen',
+            'description': 'Lorem ipsum is simply...',
+            'register_time': '9 MAY 17:16',
+            'status': 'active',
+            'color': '#36b9cc'
+        },
+        {
+            'username': 'Ida Jorgensen',
+            'description': 'Lorem ipsum is simply text of...',
+            'register_time': '13 MAY 17:46',
+            'status': 'inactive',
+            'color': '#f6c23e'
+        },
+        {
+            'username': 'Albert Anderson',
+            'description': 'Lorem ipsum is simply dummy...',
+            'register_time': '21 JULY 12:56',
+            'status': 'active',
+            'color': '#e74a3b'
+        }
+    ]
+    
+    return render_template('admin/dashboard.html', recent_users=recent_users)
+
+@app.route('/admin/users')
+@jwt_required()
+def admin_users():
+    return render_template('admin/users.html')
+
+@app.route('/admin/category')
+def admin_category():
+    return render_template('admin/category.html')
+
+@app.route('/admin/products')
+@jwt_required()
+def admin_products():
+    return render_template('admin/products.html')
+
+@app.route('/admin/orders')
+@jwt_required()
+def admin_orders():
+    return render_template('admin/orders.html')
+
+@app.route('/admin/settings')
+@jwt_required()
+def admin_settings():
+    return render_template('admin/settings.html')
