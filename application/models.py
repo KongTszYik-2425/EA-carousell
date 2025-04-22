@@ -30,6 +30,7 @@ class Customer(db.Model):
     coin = db.Column(db.Float, nullable=False, default=0, comment='特殊币')
     currency = db.Column(db.Float, nullable=False, default=0, comment='现金')
     password = db.Column(db.String(100), nullable=False)
+    products = db.relationship('Product', backref='customer', lazy='dynamic')
 
     # 返回函数
     def __repr__(self):
@@ -67,7 +68,7 @@ class Product(db.Model):
     productID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     productName = db.Column(db.String(100), nullable=False)
     categoryID = db.Column(db.Integer, nullable=False, comment='类id')
-    condition = db.Column(db.String(100), nullable=False, comment='商品状况')
+    circumstance = db.Column(db.String(100), nullable=False, comment='商品状况')
     price = db.Column(db.Float, nullable=False)
     avatarUrl = db.Column(db.String(100), nullable=False, comment='封面')
     imagesUrl = db.Column(db.Text, nullable=True)
@@ -77,6 +78,8 @@ class Product(db.Model):
     post = db.Column(db.Boolean, default=1, comment='是否邮寄')
     optionalDesc = db.Column(db.Text, nullable=True, comment='选择性填写资料')
     praise = db.Column(db.Integer, nullable=False, default=0, comment='点赞数量')
-
+    postDate = db.Column(db.DateTime, nullable=False, comment='发布时间')
+    state = db.Column(db.String(100), nullable=False, default=0, comment='商品状态:正常,下架,冻结')
+    owner=db.Column(db.Integer,db.ForeignKey('customer.custID'),nullable=False,comment='卖家id')
     def __repr__(self):
         return f'<Product {self.productName}>'

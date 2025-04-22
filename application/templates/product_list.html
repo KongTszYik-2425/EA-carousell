@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_list.css') }}">
+<div class="container mt-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-2">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+            <li class="breadcrumb-item active" aria-current="page">"{{ search }}"的搜寻结果</li>
+        </ol>
+    </nav>
+
+    <!-- 筛选条件 -->
+    <div class="filter-bar d-flex flex-wrap align-items-center mb-4">
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown">
+                分类 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category='椅子') }}">椅子</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category='桌子') }}">桌子</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category='沙发') }}">沙发</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown">
+                排序: {{ sort if sort else '最佳匹配' }} <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, sort='最佳匹配') }}">最佳匹配</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, sort='价格从低到高') }}">价格从低到高</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, sort='价格从高到低') }}">价格从高到低</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, sort='最新发布') }}">最新发布</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="typeDropdown" data-toggle="dropdown">
+                类型 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, type='全部') }}">全部</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, type='办公椅') }}">办公椅</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, type='餐椅') }}">餐椅</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="stateDropdown" data-toggle="dropdown">
+                款式 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, style='全部') }}">全部</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, style='现代') }}">现代</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, style='传统') }}">传统</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="conditionDropdown" data-toggle="dropdown">
+                商品状况 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, condition='全部') }}">全部</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, condition='全新') }}">全新</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, condition='二手') }}">二手</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="priceDropdown" data-toggle="dropdown">
+                价位 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, price='全部') }}">全部</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, price='0-500') }}">HK$0-500</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, price='500-1000') }}">HK$500-1000</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, price='1000+') }}">HK$1000以上</a>
+            </div>
+        </div>
+
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dealDropdown" data-toggle="dropdown">
+                交易方式 <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, deal='全部') }}">全部</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, deal='自取') }}">自取</a>
+                <a class="dropdown-item" href="{{ url_for('product_list', category=category, deal='送货') }}">送货</a>
+            </div>
+        </div>
+
+        <button class="btn btn-outline-secondary mb-2" type="button" data-toggle="modal" data-target="#moreFiltersModal">
+            更多筛选项目 <i class="bi bi-plus"></i>
+        </button>
+    </div>
+
+    <!-- 搜索结果信息 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>有 {{ products|length }} 个{{ search }}的搜寻结果在 Hong Kong</h5>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="saveSearch" {% if saved_search %}checked{% endif %}>
+            <label class="form-check-label" for="saveSearch">保存此搜寻</label>
+            <i class="bi bi-gear-fill ml-2"></i>
+        </div>
+    </div>
+
+    <!-- 产品列表 -->
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            
+            <div class="card h-100">
+                <div class="cardavatar ">
+                    <div class="fit-image avatar"><img class="clip-image"
+                            src="https://media.karousell.com/media/photos/products/2025/3/8/nike_dunk_low_1741416351_a758a893_progressive_thumbnail.jpg"
+                            class="card-img-top" alt="..."></div>
+                    <div class="content">
+                        <strong style="font-size: 16px;">{{product.username}}</strong><br><span class="text-secondary" style="font-size: 14px;">{{product.time_ago}}</span>
+                    </div>
+                </div>
+                <div class="position-relative">
+                    <a href="{{ url_for('product_detail', product_id=product.productID) }}">
+                        <img src="{{ product.avatarUrl }}" class="card-img-top" alt="{{ product.productName }}">
+                    </a>
+                    <button class="btn btn-sm btn-light position-absolute" style="top: 10px; right: 10px;">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ product.productName }}</h6>
+                    <p class="card-text font-weight-bold">HK${{ product.price }}</p>
+                    <p class="card-text text-muted small">{{ product.circumstance }}</p>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                    <button class="btn btn-sm ">
+                        <i class="bi bi-heart"></i> {{ product.praise }}
+                    </button>
+                    <button class="btn btn-sm ">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        {% endfor %}
+        
+    </div>
+</div>
+
+<!-- 更多筛选选项模态框 -->
+<div class="modal fade" id="moreFiltersModal" tabindex="-1" aria-labelledby="moreFiltersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moreFiltersModalLabel">更多筛选选项</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>品牌</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="brand1">
+                            <label class="form-check-label" for="brand1">Allsteel</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="brand2">
+                            <label class="form-check-label" for="brand2">Office Chair</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="brand3">
+                            <label class="form-check-label" for="brand3">其他品牌</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>颜色</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="color1">
+                            <label class="form-check-label" for="color1">黑色</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="color2">
+                            <label class="form-check-label" for="color2">白色</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="color3">
+                            <label class="form-check-label" for="color3">其他颜色</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary">应用筛选</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

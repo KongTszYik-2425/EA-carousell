@@ -1,9 +1,12 @@
 from application import app
 from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session
-from application.models import Customer
+from application.models import Customer,Category,db,Product
 from flask import request, redirect, url_for, flash, make_response
 from flask_jwt_extended import create_access_token, jwt_required,jwt_required, get_jwt_identity, verify_jwt_in_request,decode_token
 from application.util import *  
+from sqlalchemy import desc
+from math import ceil
+from datetime import datetime
 
 @app.route("/")
 @app.route("/index")
@@ -295,7 +298,38 @@ def admin_users():
 
 @app.route('/admin/category')
 def admin_category():
-    return render_template('admin/category.html')
+    # 获取当前页码，默认为第1页
+    page = request.args.get('page', 1, type=int)
+    # 每页显示的记录数
+    per_page = 10
+    
+    # 查询总记录数
+    total_count = Category.query.count()
+    # 计算总页数
+    total_pages = ceil(total_count / per_page)
+    
+    # 查询当前页的数据
+    categories_paginate = Category.query.order_by(Category.categoryID).paginate(page=page, per_page=per_page, error_out=False)
+    categories = categories_paginate.items
+    
+    # 获取所有分类，用于下拉选择父类
+    all_categories = Category.query.all()
+    
+    # 为每个分类添加父类名称
+    category_dict = {category.categoryID: category.categoryName for category in all_categories}
+    
+    for category in categories:
+        if category.parentID != 0 and category.parentID in category_dict:
+            category.parent_name = category_dict[category.parentID]
+        else:
+            category.parent_name = "无父类"
+    
+    return render_template('admin/category.html', 
+                          categories=categories, 
+                          all_categories=all_categories,
+                          total_pages=total_pages, 
+                          current_page=page,
+                          total_count=total_count)
 
 @app.route('/admin/products')
 @jwt_required()
@@ -311,3 +345,134 @@ def admin_orders():
 @jwt_required()
 def admin_settings():
     return render_template('admin/settings.html')
+
+
+@app.route('/admin/category/add', methods=['POST'])
+def add_category():
+    category_name = request.form.get('categoryName')
+    parent_id = request.form.get('parentID', 0, type=int)
+    
+    if not category_name:
+        flash('分类名称不能为空', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    new_category = Category(
+        categoryName=category_name,
+        parentID=parent_id
+    )
+    
+    db.session.add(new_category)
+    db.session.commit()
+    
+    flash('分类添加成功', 'success')
+    return redirect(url_for('admin_category'))
+
+@app.route('/admin/category/edit', methods=['POST'])
+def edit_category():
+    category_id = request.form.get('categoryID', type=int)
+    category_name = request.form.get('categoryName')
+    parent_id = request.form.get('parentID', 0, type=int)
+    
+    if not category_id or not category_name:
+        flash('参数错误', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    category = Category.query.get(category_id)
+    if not category:
+        flash('分类不存在', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    category.categoryName = category_name
+    category.parentID = parent_id
+    
+    db.session.commit()
+    
+    flash('分类更新成功', 'success')
+    return redirect(url_for('admin_category'))
+
+@app.route('/admin/category/delete', methods=['POST'])
+def delete_category():
+    category_id = request.form.get('categoryID', type=int)
+    
+    if not category_id:
+        flash('参数错误', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    category = Category.query.get(category_id)
+    if not category:
+        flash('分类不存在', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    # 检查是否有子分类
+    child_categories = Category.query.filter_by(parentID=category_id).count()
+    if child_categories > 0:
+        flash('该分类下有子分类，无法删除', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    # 检查是否有关联的商品
+    products = Product.query.filter_by(categoryID=category_id).count()
+    if products > 0:
+        flash('该分类下有商品，无法删除', 'danger')
+        return redirect(url_for('admin_category'))
+    
+    db.session.delete(category)
+    db.session.commit()
+    
+    flash('分类删除成功', 'success')
+    return redirect(url_for('admin_category'))
+
+
+@app.route('/products')
+def product_list():
+    # 获取筛选参数
+    search = request.args.get('search', '椅子') #搜寻资料
+    sort = request.args.get('sort', '最佳匹配')
+    product_type = request.args.get('type', '全部')
+    style = request.args.get('style', '全部')
+    condition = request.args.get('condition', '全部')
+    price_range = request.args.get('price', '全部')
+    deal_type = request.args.get('deal', '全部')
+    
+    # products = Product.query.filter(Product.productName.ilike(f'%{search}%')).all()
+    now = datetime.utcnow()
+    query = db.session.query(Product, Customer).join(Customer)
+    if search:
+        query = query.filter(Product.productName.like(f'%{search}%'))
+    results = query.all()
+    new_results = []
+    for product, customer in results:
+        time_diff = now - product.postDate
+        if time_diff.days > 0:
+            time_ago = f"{time_diff.days} 天前"
+        else:
+            hours = int(time_diff.total_seconds() // 3600)
+            if hours < 12:
+                time_ago = f"✵ {hours} 小时前"
+            else:
+                time_ago = f"{hours} 小时前"
+        result_item = {
+                'productID': product.productID,
+                'productName': product.productName,
+                'categoryID': product.categoryID,
+                'circumstance': product.circumstance,
+                'price': product.price,
+                'avatarUrl': product.avatarUrl,
+                'imagesUrl': product.imagesUrl,
+                'multipiece': product.multipiece,
+                'handDeliver': product.handDeliver,
+                'handDeliverPlace': product.handDeliverPlace,
+                'post': product.post,
+                'optional_desc': product.optionalDesc,
+                'praise': product.praise,
+                'post_date': product.postDate,
+                'state': product.state,
+                'owner': customer.custID,
+                'username': customer.username,
+                'time_ago': time_ago
+            }
+        new_results.append(result_item)
+    return render_template('product_list.html', 
+                          products=new_results,
+                          search=search,
+                          sort=sort,
+                          saved_search=False)
