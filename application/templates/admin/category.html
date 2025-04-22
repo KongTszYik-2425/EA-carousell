@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
-{% block title %}分类管理 - Carousell后台管理系统{% endblock %}
+{% block title %}{{ gettext('分类管理') }} - {{ gettext('Carousell后台管理系统') }}{% endblock %}
 {% block content %}
-<h1 class="h3 mb-4">分类管理</h1>
+<h1 class="h3 mb-4">{{ gettext('分类管理') }}</h1>
 
 <!-- 数据卡片 -->
 <div class="row">
@@ -10,9 +10,13 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">日销售额</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ 249.95</div>
-                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> 67%</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{ gettext('日销售额') }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ daily_sales|default('0.00', true) }}</div>
+                        {% if daily_sales_change > 0 %}
+                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> {{ daily_sales_change }}%</div>
+                        {% else %}
+                        <div class="text-danger mt-2"><i class="fas fa-arrow-down"></i> {{ daily_sales_change|abs }}%</div>
+                        {% endif %}
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -27,9 +31,13 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">月销售额</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ 2,942.32</div>
-                        <div class="text-danger mt-2"><i class="fas fa-arrow-down"></i> 36%</div>
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">{{ gettext('月销售额') }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ monthly_sales|default('0.00', true) }}</div>
+                        {% if monthly_sales_change > 0 %}
+                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> {{ monthly_sales_change }}%</div>
+                        {% else %}
+                        <div class="text-danger mt-2"><i class="fas fa-arrow-down"></i> {{ monthly_sales_change|abs }}%</div>
+                        {% endif %}
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -44,9 +52,13 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">年销售额</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ 8,638.32</div>
-                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> 54%</div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{{ gettext('年销售额') }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ yearly_sales|default('0.00', true) }}</div>
+                        {% if yearly_sales_change > 0 %}
+                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> {{ yearly_sales_change }}%</div>
+                        {% else %}
+                        <div class="text-danger mt-2"><i class="fas fa-arrow-down"></i> {{ yearly_sales_change|abs }}%</div>
+                        {% endif %}
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
@@ -60,46 +72,52 @@
 <!-- 最近用户 -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">最近用户</h6>
-        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-primary">查看全部</a>
+        <h6 class="m-0 font-weight-bold text-primary">{{ gettext('最近用户') }}</h6>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-primary">{{ gettext('查看全部') }}</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>用户名</th>
-                        <th>注册时间</th>
-                        <th>状态</th>
-                        <th>操作</th>
+                        <th>{{ gettext('用户名') }}</th>
+                        <th>{{ gettext('注册时间') }}</th>
+                        <th>{{ gettext('状态') }}</th>
+                        <th>{{ gettext('操作') }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in recent_users %}
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar mr-2" style="background-color: {{ user.color }}">{{ user.username[0] }}</div>
-                                <div>
-                                    <div>{{ user.username }}</div>
-                                    <small class="text-muted">{{ user.description }}</small>
+                    {% if recent_users %}
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar mr-2" style="background-color: {{ user.color }}">{{ user.username[0] }}</div>
+                                    <div>
+                                        <div>{{ user.username }}</div>
+                                        <small class="text-muted">{{ user.description|default('', true) }}</small>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>{{ user.register_time }}</td>
-                        <td>
-                            {% if user.status == 'active' %}
-                            <span class="badge badge-success">活跃</span>
-                            {% else %}
-                            <span class="badge badge-danger">不活跃</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary">审核</button>
-                            <button class="btn btn-sm btn-success">批准</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                            </td>
+                            <td>{{ user.register_time.strftime('%Y-%m-%d %H:%M') if user.register_time else '' }}</td>
+                            <td>
+                                {% if user.status == 'active' %}
+                                <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i>{{ gettext('活跃') }}</span>
+                                {% else %}
+                                <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i>{{ gettext('不活跃') }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">{{ gettext('审核') }}</button>
+                                <button class="btn btn-sm btn-success">{{ gettext('批准') }}</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">{{ gettext('暂无用户数据') }}</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
@@ -113,8 +131,8 @@
             <div class="card-body">
                 <div class="text-center">
                     <i class="fas fa-calendar-check fa-3x mb-3 text-primary"></i>
-                    <h4>45</h4>
-                    <p class="mb-0">即将到来的活动</p>
+                    <h4>{{ upcoming_events|default(0) }}</h4>
+                    <p class="mb-0">{{ gettext('即将到来的活动') }}</p>
                 </div>
             </div>
         </div>
@@ -124,8 +142,8 @@
             <div class="card-body">
                 <div class="text-center">
                     <i class="fas fa-lightbulb fa-3x mb-3 text-warning"></i>
-                    <h4>235</h4>
-                    <p class="mb-0">总创意数</p>
+                    <h4>{{ total_ideas|default(0) }}</h4>
+                    <p class="mb-0">{{ gettext('总创意数') }}</p>
                 </div>
             </div>
         </div>
@@ -135,8 +153,8 @@
             <div class="card-body">
                 <div class="text-center">
                     <i class="fas fa-map-marker-alt fa-3x mb-3 text-info"></i>
-                    <h4>26</h4>
-                    <p class="mb-0">总位置数</p>
+                    <h4>{{ total_locations|default(0) }}</h4>
+                    <p class="mb-0">{{ gettext('总位置数') }}</p>
                 </div>
             </div>
         </div>
