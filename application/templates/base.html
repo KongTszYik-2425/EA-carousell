@@ -198,7 +198,7 @@
     </div>
     
 </body>
-
+{% block scripts %}
 <script>
     const input = document.getElementById('productsearchinput');
     const parentDiv = document.getElementById('productsearch');
@@ -235,6 +235,7 @@
                 },
                 success: function () {
                     $('.logined-nav').show();
+                    console.log("success")
                     $('.unlogin-nav').hide();
                 },
                 error: function () {
@@ -319,3 +320,4 @@
         window.location.reload(true); 
     }
 </script>
+{% endblock scripts %}

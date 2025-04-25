@@ -50,3 +50,13 @@
     border: none;
     box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.315);
 }
+
+
+
+.sub-option{
+    cursor: pointer;
+}
+.sub-option:hover{
+    color: rgb(99, 0, 0);
+    text-decoration: none;
+}

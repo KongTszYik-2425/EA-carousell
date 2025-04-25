@@ -424,20 +424,48 @@ def delete_category():
 
 @app.route('/products')
 def product_list():
+    current_user_id = request.args.get("token")
+    user_data= decodeCustomer(current_user_id)
     # 获取筛选参数
-    search = request.args.get('search', '椅子') #搜寻资料
+    search = request.args.get('search') #搜寻资料
     sort = request.args.get('sort', '最佳匹配')
     product_type = request.args.get('type', '全部')
     style = request.args.get('style', '全部')
     condition = request.args.get('condition', '全部')
     price_range = request.args.get('price', '全部')
     deal_type = request.args.get('deal', '全部')
+    category_id = request.args.get('category_id', type=int)
+    sort = request.args.get('sort', '最佳匹配')
+    circumstance=request.args.get('circumstance', '全部')
+    price_range = request.args.get('price_range', '全部')
     
     # products = Product.query.filter(Product.productName.ilike(f'%{search}%')).all()
     now = datetime.utcnow()
     query = db.session.query(Product, Customer).join(Customer)
     if search:
-        query = query.filter(Product.productName.like(f'%{search}%'))
+        if category_id!=None:
+            query = query.filter(Product.categoryID == category_id)
+        else:    
+            query = query.filter(Product.productName.like(f'%{search}%'))
+
+        if sort == '价格从低到高':
+            query = query.order_by(Product.price)
+        elif sort == '价格从高到低':
+            query = query.order_by(desc(Product.price))
+        elif sort == '最新发布':
+            query = query.order_by(desc(Product.postDate))    
+
+        if circumstance != '全部':
+            query = query.filter(Product.circumstance == circumstance)  
+
+        if price_range != '全部':
+            if price_range == '0-500':
+                query = query.filter(Product.price < 500)
+            elif price_range == '500-1000':
+                query = query.filter(Product.price >= 500, Product.price < 1000)     
+            elif price_range == '1000+':
+                query = query.filter(Product.price >=1000)        
+
     results = query.all()
     new_results = []
     for product, customer in results:
@@ -471,8 +499,44 @@ def product_list():
                 'time_ago': time_ago
             }
         new_results.append(result_item)
+    all_categories = Category.query.all()
+    
+    # 创建分类字典，用于快速查找
+    category_dict = {category.categoryID: category for category in all_categories}
+    
+    # 创建分类树结构
+    category_tree = []
+    
+    # 找出所有顶级分类（parentID为0的分类）
+    for category in all_categories:
+        if category.parentID == 0:
+            # 创建分类对象的副本，添加children属性
+            category_copy = {
+                'categoryID': category.categoryID,
+                'categoryName': category.categoryName,
+                'parentID': category.parentID,
+                'children': []
+            }
+            category_tree.append(category_copy)
+    
+    # 将子分类添加到对应的父分类中
+    for category in all_categories:
+        if category.parentID != 0 and category.parentID in category_dict:
+            # 找到父分类在category_tree中的位置
+            for parent_category in category_tree:
+                if parent_category['categoryID'] == category.parentID:
+                    # 创建子分类对象
+                    child_category = {
+                        'categoryID': category.categoryID,
+                        'categoryName': category.categoryName,
+                        'parentID': category.parentID
+                    }
+                    # 添加到父分类的children列表中
+                    parent_category['children'].append(child_category)    
     return render_template('product_list.html', 
                           products=new_results,
                           search=search,
                           sort=sort,
-                          saved_search=False)
+                          saved_search=False,
+                          User=user_data,
+                          category_tree=category_tree)
