@@ -13,35 +13,40 @@
 
     <!-- 筛选条件 -->
     <div class="filter-bar d-flex flex-wrap align-items-center mb-4">
-        <div class="dropdown mr-2 mb-2" >
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                aria-expanded="false">
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-toggle="dropdown" aria-expanded="false">
                 分类
             </button>
             <ul class="dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
                 {% for category in category_tree %}
-                <li>
-                    <a href="{{ url_for('product_list', search=search, category_id=category.categoryID) }}" class="dropdown-item" id="category-{{ category.categoryName }}" onclick="drop(this)" type="button" data-toggle="collapse">
+                <li class="dropdown-item" id="category-{{ category.categoryName }}">
+                    <a href="{{ url_for('product_list', search=search, category_id=category.categoryID) }}"
+                        onclick="drop(this)" type="button" data-toggle="collapse">
                         {{ category.categoryName }}
                     </a>
-                </li>
-                {% if category.children|length > 0 %}
+                    {% if category.children|length > 0 %}
                 <li>
                     <div class="collapse" id="drop-category-{{ category.categoryName }}">
                         <div class="card card-body">
                             {% for subcategory in category.children %}
-                            <a class="sub-option" href="{{ url_for('product_list', search=search, category_id=subcategory.categoryID) }}">{{ subcategory.categoryName }}</a>
+                            <a class="sub-option"
+                                href="{{ url_for('product_list', search=search, category_id=subcategory.categoryID) }}">{{
+                                subcategory.categoryName }}</a>
                             {% endfor %}
                         </div>
-                      </div>
+                    </div>
                 </li>
                 {% endif %}
+                </li>
+
                 {% endfor %}
             </ul>
         </div>
 
         <div class="dropdown mr-2 mb-2">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
+                data-toggle="dropdown">
                 排序: {{ sort if sort else '最佳匹配' }} <i class="bi bi-chevron-down"></i>
             </button>
             <div class="dropdown-menu">
@@ -53,7 +58,8 @@
         </div>
 
         <div class="dropdown mr-2 mb-2">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="conditionDropdown" data-toggle="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="conditionDropdown"
+                data-toggle="dropdown">
                 商品状况 <i class="bi bi-chevron-down"></i>
             </button>
             <div class="dropdown-menu">
@@ -64,17 +70,21 @@
         </div>
 
         <div class="dropdown mr-2 mb-2">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="priceDropdown" data-toggle="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="priceDropdown"
+                data-toggle="dropdown">
                 价位 <i class="bi bi-chevron-down"></i>
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ url_for('product_list', search=search, price_range='全部') }}">全部</a>
-                <a class="dropdown-item" href="{{ url_for('product_list', search=search, price_range='0-500') }}">HK$0-500</a>
-                <a class="dropdown-item" href="{{ url_for('product_list', search=search, price_range='500-1000') }}">HK$500-1000</a>
-                <a class="dropdown-item" href="{{ url_for('product_list', search=search, price_range='1000+') }}">HK$1000以上</a>
+                <a class="dropdown-item"
+                    href="{{ url_for('product_list', search=search, price_range='0-500') }}">HK$0-500</a>
+                <a class="dropdown-item"
+                    href="{{ url_for('product_list', search=search, price_range='500-1000') }}">HK$500-1000</a>
+                <a class="dropdown-item"
+                    href="{{ url_for('product_list', search=search, price_range='1000+') }}">HK$1000以上</a>
             </div>
         </div>
-        
+
     </div>
 
     <!-- 搜索结果信息 -->
@@ -91,14 +101,15 @@
     <div class="row">
         {% for product in products %}
         <div class="col-md-3 mb-4">
-            
+
             <div class="card h-100">
                 <div class="cardavatar ">
                     <div class="fit-image avatar"><img class="clip-image"
                             src="https://media.karousell.com/media/photos/products/2025/3/8/nike_dunk_low_1741416351_a758a893_progressive_thumbnail.jpg"
                             class="card-img-top" alt="..."></div>
                     <div class="content">
-                        <strong style="font-size: 16px;">{{product.username}}</strong><br><span class="text-secondary" style="font-size: 14px;">{{product.time_ago}}</span>
+                        <strong style="font-size: 16px;">{{product.username}}</strong><br><span class="text-secondary"
+                            style="font-size: 14px;">{{product.time_ago}}</span>
                     </div>
                 </div>
                 <div class="position-relative">
@@ -124,24 +135,23 @@
                 </div>
             </div>
         </div>
-        
+
         {% endfor %}
-        
+
     </div>
 </div>
 <script>
     $('#productsearchinput').val('{{ search }}');
     $('.dropdown-menu').on("click", function (e) {
-    e.stopPropagation();
-    // e.preventDefault();                
-});
-// function drop(button) {
-//     id= $(button).attr('id');
-//     $(`#drop-${id}`).collapse('toggle');
-// }
-$('.dropdown-item').hover(function() {
-    id= $(this).attr('id');
-    $(`#drop-${id}`).collapse('toggle');
-})
+        e.stopPropagation();               
+    });
+    
+    $('.dropdown-item').mouseenter(function () {
+        id = $(this).attr('id');
+        $(`#drop-${id}`).collapse('toggle');
+    }).mouseleave(function () {
+        id = $(this).attr('id');
+        $(`#drop-${id}`).collapse('toggle');
+    });
 </script>
 {% endblock %}

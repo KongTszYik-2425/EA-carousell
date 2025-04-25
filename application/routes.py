@@ -7,6 +7,10 @@ from application.util import *
 from sqlalchemy import desc
 from math import ceil
 from datetime import datetime
+from google.cloud import storage
+import os
+
+
 
 @app.route("/")
 @app.route("/index")
@@ -150,6 +154,39 @@ def home():
 
 @app.route('/sell', methods=['GET', 'POST'])
 def sell():
+    all_categories = Category.query.all()
+    # 创建分类字典，用于快速查找
+    category_dict = {category.categoryID: category for category in all_categories}
+    # 创建分类树结构
+    category_tree = []
+    # 找出所有顶级分类（parentID为0的分类）
+    for category in all_categories:
+        if category.parentID == 0:
+            # 创建分类对象的副本，添加children属性
+            category_copy = {
+                'categoryID': category.categoryID,
+                'categoryName': category.categoryName,
+                'parentID': category.parentID,
+                'children': []
+            }
+            category_tree.append(category_copy)
+    
+    # 将子分类添加到对应的父分类中
+    for category in all_categories:
+        if category.parentID != 0 and category.parentID in category_dict:
+            # 找到父分类在category_tree中的位置
+            for parent_category in category_tree:
+                if parent_category['categoryID'] == category.parentID:
+                    # 创建子分类对象
+                    child_category = {
+                        'categoryID': category.categoryID,
+                        'categoryName': category.categoryName,
+                        'parentID': category.parentID
+                    }
+                    # 添加到父分类的children列表中
+                    parent_category['children'].append(child_category)  
+
+
     if request.method == 'POST':
         # 处理表单提交逻辑
         title = request.form.get('title')
@@ -159,7 +196,7 @@ def sell():
         flash('商品已成功发布！', 'success')
         return redirect(url_for('index'))
     
-    return render_template('sell.html')
+    return render_template('sell.html',category_tree=category_tree)
 
 
 
@@ -540,3 +577,48 @@ def product_list():
                           saved_search=False,
                           User=user_data,
                           category_tree=category_tree)
+
+@app.route('/uploadProduct', methods=['POST'])
+def uploadProduct():
+    files = request.files.getlist('preview_images')
+    productName = request.form.get('productName')
+    price = request.form.get('price')
+    circumstance = request.form.get('circumstance')
+    description = request.form.get('description')
+    categoryID = request.form.get('categoryID')
+    deliverMethod = request.form.get('deliverMethod')
+    otherInfo = request.form.get('otherInfo')
+    owner = request.form.get('owner')
+
+    urls=upload_file_to_bucket(files)
+    avatarUrl=urls[0]
+    imagesUrl=urls[1]
+
+    new_product = Product(
+        productName=productName,
+        categoryID=categoryID,
+        circumstance=circumstance,
+        price=float(price) if price else 0,
+        avatarUrl=avatarUrl,
+        imagesUrl=imagesUrl,
+        otherInfo=otherInfo,  # JSON格式的其他属性
+        praise=0,  # 初始点赞数为0
+        postDate=datetime.utcnow(),  # 设置当前时间为发布时间
+        state="正常",  # 假设1表示正常状态
+        owner=owner,  # 设置所有者ID
+        description=description,  # 商品描述
+        deliverMethod=deliverMethod  # 配送方式：1为面交，0为邮寄
+    )
+    
+    # 将新产品添加到数据库
+    db.session.add(new_product)
+    db.session.commit()
+    
+    # 返回成功消息
+    return jsonify({
+        "status": "success", 
+        "message": "产品上传成功", 
+        "productID": new_product.productID
+    })
+    return '上传成功'
+                        

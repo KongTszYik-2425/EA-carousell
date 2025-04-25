@@ -72,14 +72,12 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     avatarUrl = db.Column(db.String(100), nullable=False, comment='封面')
     imagesUrl = db.Column(db.Text, nullable=True)
-    multipiece = db.Column(db.Boolean, nullable=False, default=0, comment='是否多件')
-    handDeliver = db.Column(db.Boolean, nullable=False, default=0, comment='是否面交')
-    handDeliverPlace = db.Column(db.String(100), nullable=True, comment='面交地点')
-    post = db.Column(db.Boolean, default=1, comment='是否邮寄')
-    optionalDesc = db.Column(db.Text, nullable=True, comment='选择性填写资料')
+    otherInfo = db.Column(db.Text, nullable=True, comment='选择性填写资料')
     praise = db.Column(db.Integer, nullable=False, default=0, comment='点赞数量')
     postDate = db.Column(db.DateTime, nullable=False, comment='发布时间')
     state = db.Column(db.String(100), nullable=False, default=0, comment='商品状态:正常,下架,冻结')
     owner=db.Column(db.Integer,db.ForeignKey('customer.custID'),nullable=False,comment='卖家id')
+    description = db.Column(db.Text, nullable=True, comment='描述')
+    deliverMethod=db.Column(db.String(50),nullable=True,comment='配送方式')
     def __repr__(self):
         return f'<Product {self.productName}>'
