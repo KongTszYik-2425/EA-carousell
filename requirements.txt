@@ -11,4 +11,10 @@ PyMySQL==1.0.2
 debugpy==1.6.4
 WTForms==3.0.1
 Flask-JWT-Extended==4.3.1
-google-cloud-storage
+google-api-core==2.24.2
+google-auth==2.39.0
+google-cloud-core==2.4.3
+google-cloud-storage==3.1.0
+google-crc32c==1.7.1
+google-resumable-media==2.7.2
+googleapis-common-protos==1.70.0
