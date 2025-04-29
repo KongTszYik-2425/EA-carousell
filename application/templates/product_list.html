@@ -20,8 +20,8 @@
             </button>
             <ul class="dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
                 {% for category in category_tree %}
-                <li class="dropdown-item" id="category-{{ category.categoryName }}">
-                    <a href="{{ url_for('product_list', search=search, category_id=category.categoryID) }}"
+                <li class="dropdown-item" id="category-{{ category.categoryName }}" onclick="drop(this)" href="/prodcuts?search=''&category={{category.categoryID}}">
+                    <a href="{{ url_for('product_list', search=search, category=category.categoryID) }}"
                         onclick="drop(this)" type="button" data-toggle="collapse">
                         {{ category.categoryName }}
                     </a>
@@ -31,7 +31,7 @@
                         <div class="card card-body">
                             {% for subcategory in category.children %}
                             <a class="sub-option"
-                                href="{{ url_for('product_list', search=search, category_id=subcategory.categoryID) }}">{{
+                                href="{{ url_for('product_list', search=search, category=subcategory.categoryID) }}">{{
                                 subcategory.categoryName }}</a>
                             {% endfor %}
                         </div>
@@ -101,7 +101,6 @@
     <div class="row">
         {% for product in products %}
         <div class="col-md-3 mb-4">
-
             <div class="card h-100">
                 <div class="cardavatar ">
                     <div class="fit-image avatar"><img class="clip-image"
@@ -112,7 +111,7 @@
                             style="font-size: 14px;">{{product.time_ago}}</span>
                     </div>
                 </div>
-                <div class="position-relative">
+                <div class="position-relative" style="max-width: 292px;max-height: 292px;overflow: hidden;">
                     <a href="{{ url_for('product_detail', product_id=product.productID) }}">
                         <img src="{{ product.avatarUrl }}" class="card-img-top" alt="{{ product.productName }}">
                     </a>
@@ -141,7 +140,11 @@
     </div>
 </div>
 <script>
-    $('#productsearchinput').val('{{ search }}');
+    searchvalue = '{{ search }}';
+    if (searchvalue==null||searchvalue=='None'){
+        searchvalue = '';
+    }
+    $('#productsearchinput').val(searchvalue);
     $('.dropdown-menu').on("click", function (e) {
         e.stopPropagation();               
     });
@@ -153,5 +156,9 @@
         id = $(this).attr('id');
         $(`#drop-${id}`).collapse('toggle');
     });
+
+    function drop(e) {
+       window.location.href = $(e).attr('href'); 
+    }
 </script>
 {% endblock %}

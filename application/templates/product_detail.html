@@ -9,8 +9,8 @@
     <nav aria-label="breadcrumb" class="small mb-3">
         <ol class="breadcrumb mb-0" style="background-color: transparent;">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">首页</a></li>
-            <li class="breadcrumb-item"><a href="#" class="text-decoration-none">智能电视</a></li>
-            <li class="breadcrumb-item active" aria-current="page">电视</li>
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none">{{category_info.parent}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{category_info.current}}</li>
         </ol>
     </nav>
 
@@ -18,22 +18,16 @@
         <div id="carousel" class="carousel slide" data-ride="carousel">
             <div class="carouselinner row">
                 <div class="carouselitem">
-                    <img src="https://media.karousell.com/media/photos/special-collection/2024/11/21/210b345029cce775_(1500,610)"
-                        style="height: 263.415px; width: 648px;">
+                    <img src="{{product.avatarUrl}}" style="height: 263.415px; width: 648px;">
                 </div>
+                {% if product_images %}
+                {% for image in product_images %}
                 <div class="carouselitem">
-                    <img src="https://media.karousell.com/media/photos/special-collection/2025/03/10/6436b138c986cc47_(1500,610)"
-                        style="height: 263.415px; width: 648px;">
-
-                </div>
-                <div class="carouselitem">
-                    <img src="https://media.karousell.com/media/photos/special-collection/2024/08/22/2ba8f8c603f2e466_(1500,610)"
+                    <img src="{{image}}"
                         style="height: 263.415px; width: 648px;">
                 </div>
-                <div class="carouselitem">
-                    <img src="https://media.karousell.com/media/photos/special-collection/2025/02/22/7c877230b46aa447_(1500,610)"
-                        style="height: 263.415px; width: 648px;">
-                </div>
+                {% endfor %}
+                {% endif %}
             </div>
 
         </div>
@@ -49,8 +43,8 @@
     <!-- 产品主要信息 -->
     <div class="row g-4" style="margin-top: 20px;">
         <div class="col-lg-8">
-            <h1 class="h3 mb-2">{{ product.name }}</h1>
-            <h2 class="h4 text-danger mb-3">{{ product.price }}</h2>
+            <h1 class="h3 mb-2">{{ product.productName }}</h1>
+            <h2 class="h4 text-danger mb-3">HK${{ product.price }}</h2>
             <hr>
 
 
@@ -59,12 +53,22 @@
                 <h3 class="h6 mb-3">其他信息</h3>
                 <table class="table table-sm">
                     <tbody>
-                        {% for key, value in product.specs.items() %}
+                        {% if other_info %}
+                        {% for key, value in other_info.items() %}
                         <tr>
                             <td class="text-muted" style="width: 30%;">{{ key }}</td>
                             <td>{{ value }}</td>
                         </tr>
                         {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">暂无其他信息</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="text-muted" style="width: 30%;">发布时间</td>
+                            <td>{{ postDate }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -76,63 +80,53 @@
             </div>
 
             <!-- 商品地址 -->
-            <div class="mb-4">
-                <h3 class="h5 mb-3">商品地址</h3>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><i class="fas fa-map-marker-alt text-danger me-2"></i>{{ product.location }}</li>
-                    <li class="mb-2"><i class="fas fa-map text-danger me-2"></i>{{ product.address }}</li>
-                    <li><i class="fas fa-phone text-danger me-2"></i>{{ product.contact }}</li>
-                </ul>
-            </div>
             <hr>
             <!-- 交易方式 -->
             <div class="mb-4">
                 <h3 class="h5 mb-3">交易方式</h3>
-                <div class="row">
-                    {% for option in product.delivery_options %}
-                    <div class="col-6">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><i
-                                    class="fas {% if option.name == '自取' %}fa-store{% else %}fa-truck{% endif %} text-primary me-2"></i>{{
-                                option.name }}</span>
-                            <span>{{ option.price }}</span>
+                        <div class="d-flex align-items-center mb-2">
+                            <button type="button" class="btn btn-primary">{{ product.deliverMethod }}</button>
                         </div>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
         </div>
         <!-- 产品图片 -->
-        <div class="col-lg-4" style="padding-left: 20px;padding-right: 20px;position: relative;">
-            <div class="seller">
+        <div class="col-lg-4" style="padding-left: 20px;padding-right: 20px;position: relative;"">
+            <div class="seller" style="box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.274);">
                 <!-- 卖家信息 -->
                 <div class="d-flex align-items-center mb-4">
-                    <img src="{{ url_for('static', filename=product.seller.image.replace('static/', '')) }}"
-                        class="rounded-circle me-2" width="32" height="32" alt="{{ product.seller.name }}">
+                    <img src="{{owner.avatarUrl}}" class="rounded-circle me-2" width="32" height="32">
                     <div>
                         <div class="d-flex align-items-center">
-                            <span class="me-2">{{ product.seller.name }}</span>
-                            <div class="text-warning small">
-                                {% for i in range(5) %}
-                                <i
-                                    class="fas fa-star{% if i >= product.seller.rating|int %}{% if i < product.seller.rating %}-half{% else %}-o{% endif %}{% endif %}"></i>
-                                {% endfor %}
-                                <span class="text-muted">({{ product.seller.reviews }})</span>
-                            </div>
+                            <strong class="me-2">&emsp;{{ owner.username }}</strong>
                         </div>
                     </div>
                 </div>
-            
-            <!-- 购买按钮 -->
-            <div class="d-grid mb-4">
-                <button class="btn btn-danger">购入</button>
-            </div>
 
-            <!-- 收藏按钮 -->
-            <div class="d-flex justify-content-between mb-4">
-                <button class="btn btn-outline-secondary w-100">收藏</button>
+                <!-- 购买按钮 -->
+                <div class="d-grid mb-4">
+                    <button class="btn btn-danger" style="width: 100%;">对话</button>
+                </div>
+
+
+                <!-- 收藏按钮 -->
+                <div class="input-group">
+                    <input type="number" class="form-control" id="inlineFormInputGroupUsername" placeholder="Username"
+                        value="{{product.price}}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">出价</button>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                    <h5><i class="bi bi-bag-x-fill"></i> 退货</h5>
+                    <p class="text-secondary">退貨取決於賣家的決定。不屬於買家保護範圍。</p>
+                </div>
+                <hr>
+                <div>
+                    <h5><i class="bi bi-person-raised-hand"></i> 见面时付款</h5>
+                    <p class="text-secondary">賣家不接受透過旋轉拍賣付款。為了您的安全，請避免在聚會前付款。了解如何安全交易</p>
+                </div>
             </div>
-        </div>
         </div>
 
         <!-- 产品信息 -->
@@ -140,71 +134,79 @@
     </div>
 
     <!-- 评价 -->
-    <div class="card mt-5">
-        <div class="card-header bg-white">
-            <h3 class="h5 mb-0">浏览买家评价</h3>
+    <div class="card mt-5" style="box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.274);">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h3 class="h5 mb-0">對 {{owner.username}} 的評論 
+                <span class="text-warning">{{avg_rating}} 
+                    {% for i in range(1, 6) %}
+                        {% if i <= avg_star %}
+                            <i class="bi bi-star-fill"></i>
+                        {% else %}
+                            <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </span> 
+                <span class="text-muted">({{review_count}})</span>
+            </h3>
+            <a href="{{ url_for('userinfo', custID=owner.custID, review_page=1) }}" class="btn btn-outline-primary btn-sm">查看所有评价 <i class="bi bi-chevron-right ms-1"></i></a>
         </div>
         <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    {% for review in product.reviews %}
-                    <div class="d-flex mb-4">
-                        <div class="flex-shrink-0">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white"
-                                style="width: 40px; height: 40px; background-color: {{ review.avatar_color }};">
-                                {{ review.user[0] | upper }}
+            {% if reviews|length==0 %}
+                <div class="text-center py-4">
+                    <i class="bi bi-star text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">暂无评价</h5>
+                    <p class="text-muted">成为第一个评价此用户的人</p>
+                </div>
+            {% else %}
+                <div class="review-list">
+                    {% for review in reviews %}
+                    <div class="review-item mb-4 p-3 rounded">
+                        <div class="d-flex">
+                            <div class="reviewer-avatar me-3">
+                                <a href="{{ url_for('userinfo', custID=review.user.custID) }}">
+                                    <img src="{{review.user.avatarUrl}}" 
+                                         alt="{{ review.user.username }}" 
+                                         class="rounded-circle"
+                                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #f8f9fa;">
+                                </a>
                             </div>
-                        </div>
-                        <div class="ms-3">
-                            <div class="d-flex align-items-center mb-1">
-                                <h6 class="mb-0 me-2">{{ review.user }}</h6>
-                                <small class="text-muted">{{ review.time }}</small>
+                            <div class="review-content flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 class="mb-0">
+                                            <a href="{{ url_for('userinfo', custID=review.user.custID) }}" class="text-decoration-none text-dark">
+                                                {{ review.user.username }}
+                                            </a>
+                                        </h6>
+                                        <div class="stars">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= review.rating %}
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star text-warning"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <small class="text-muted ms-2">{{ review.time_ago }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0 review-text">{{ review.comment }}</p>
                             </div>
-                            <div class="text-warning mb-2">
-                                {% for i in range(review.rating) %}
-                                <i class="fas fa-star small"></i>
-                                {% endfor %}
-                            </div>
-                            <p class="mb-0 small">{{ review.comment }}</p>
                         </div>
                     </div>
+                    {% if not loop.last %}
+                    <hr class="my-3">
+                    {% endif %}
                     {% endfor %}
                 </div>
-            </div>
-
-            <a href="#" class="btn btn-outline-primary btn-sm">查看所有评价 <i class="fas fa-chevron-right ms-1"></i></a>
+            {% endif %}
         </div>
     </div>
 
     <!-- 相关推荐 -->
-    <div class="mt-5">
-        <h3 class="h5 mb-4">其他人也在搜寻</h3>
-        <div class="row">
-            {% for tag in related_tags %}
-            <div class="col-auto mb-2">
-                <a href="#" class="btn btn-sm btn-outline-secondary">{{ tag }}</a>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 
     <!-- 相关产品 -->
-    <div class="mt-4">
-        <div class="row">
-            {% for item in related_products %}
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <img src="{{ url_for('static', filename=item.image.replace('static/', '')) }}" class="card-img-top"
-                        alt="{{ item.name }}">
-                    <div class="card-body">
-                        <h6 class="card-title small">{{ item.name }}</h6>
-                        <p class="card-text text-danger">{{ item.price }}</p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+    
 </div>
 
 <!-- 自定义样式 -->
@@ -224,6 +226,31 @@
     .table td {
         padding: 0.5rem;
         border-color: #f0f0f0;
+    }
+    
+    /* 评价样式 */
+    .stars {
+        font-size: 16px;
+    }
+    
+    .review-item {
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    
+    .review-item:hover {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .review-text {
+        line-height: 1.6;
+        color: #495057;
+    }
+    
+    .reviewer-avatar img:hover {
+        border-color: #dee2e6 !important;
     }
 </style>
 <script>

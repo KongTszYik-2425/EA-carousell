@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token, verify_jwt_in_request, get_jwt
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import config
@@ -20,18 +20,63 @@ class Customer(db.Model):
     startBusinessTime = db.Column(db.Time, nullable=True, comment='开始营业时间')
     endBusinessTime = db.Column(db.Time, nullable=True, comment='结束营业时间')
     marketPlace = db.Column(db.String(100), nullable=False, comment='营业地点')
-    district = db.Column(db.String(100), nullable=False, comment='地区')
-    city = db.Column(db.String(100), nullable=False, comment='城市')
     website = db.Column(db.String(100), nullable=True, comment='网页链接')
     email = db.Column(db.String(100), nullable=True)
     bornDate = db.Column(db.Date, nullable=True)
     joinDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, comment='注册时间')
-    Avatar = db.Column(db.String(100), nullable=True, comment='头像')
-    coin = db.Column(db.Float, nullable=False, default=0, comment='特殊币')
-    currency = db.Column(db.Float, nullable=False, default=0, comment='现金')
+    avatar = db.Column(db.String(100), nullable=True, comment='头像')
     password = db.Column(db.String(100), nullable=False)
     products = db.relationship('Product', backref='customer', lazy='dynamic')
 
+
+    @jwt_required()
+    def get(current_user_id):
+        user_data = None
+        if current_user_id:
+                user = Customer.query.get(current_user_id)
+                if user:
+                    user_data = {
+                        'custID': user.custID,
+                        'username': user.username,
+                        'firstName': user.firstName,
+                        'lastName': user.lastName,
+                        'gender': user.gender,
+                        'description': user.description,
+                        'businessNo': user.businessNo,
+                        'startBusinessTime': user.startBusinessTime.strftime('%H:%M') if user.startBusinessTime else None,
+                        'endBusinessTime': user.endBusinessTime.strftime('%H:%M') if user.endBusinessTime else None,
+                        'marketPlace': user.marketPlace,
+                        'website': user.website,
+                        'email': user.email,
+                        'bornDate': user.bornDate.strftime('%Y-%m-%d') if user.bornDate else None,
+                        'joinDate': user.joinDate.strftime('%Y-%m-%d %H:%M:%S') if user.joinDate else None,
+                        'avatar': user.avatar
+                        # 不返回密码和products
+                    }
+        return user_data
+
+    def getSimple(current_user_id):
+        user_data = None
+        if current_user_id:
+                user = Customer.query.get(current_user_id)
+                if user:
+                    user_data = {
+                        'custID': user.custID,
+                        'username': user.username,
+                        'gender': user.gender,
+                        'description': user.description,
+                        'businessNo': user.businessNo,
+                        'startBusinessTime': user.startBusinessTime.strftime('%H:%M') if user.startBusinessTime else None,
+                        'endBusinessTime': user.endBusinessTime.strftime('%H:%M') if user.endBusinessTime else None,
+                        'marketPlace': user.marketPlace,
+                        'website': user.website,
+                        'email': user.email,
+                        'bornDate': user.bornDate.strftime('%Y-%m-%d') if user.bornDate else None,
+                        'joinDate': user.joinDate.strftime('%Y-%m-%d %H:%M:%S') if user.joinDate else None,
+                        'avatar': user.avatar
+                        # 不返回密码和products
+                    }
+        return user_data    
     # 返回函数
     def __repr__(self):
         return f'<Customer {self.username}>'
@@ -81,3 +126,26 @@ class Product(db.Model):
     deliverMethod=db.Column(db.String(50),nullable=True,comment='配送方式')
     def __repr__(self):
         return f'<Product {self.productName}>'
+
+
+class Review(db.Model):
+    __tablename__ = 'review'        
+
+    reviewID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    customerID = db.Column(db.Integer, nullable=False, comment='被评价的用户ID')
+    reviewerID = db.Column(db.Integer, nullable=False, comment='评价者ID')
+    content = db.Column(db.Text, nullable=False, comment='评价内容')
+    star = db.Column(db.Integer, nullable=False, default=0, comment='评分(1-5星)')
+    reviewDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, comment='评价时间')
+    
+    # 添加外键关联
+    customer = db.relationship('Customer', foreign_keys=[customerID], 
+                              backref=db.backref('received_reviews', lazy='dynamic'),
+                              primaryjoin="Review.customerID == Customer.custID")
+    
+    reviewer = db.relationship('Customer', foreign_keys=[reviewerID],
+                              backref=db.backref('given_reviews', lazy='dynamic'),
+                              primaryjoin="Review.reviewerID == Customer.custID")
+
+    def __repr__(self):
+        return f'<Review {self.reviewID} from {self.reviewerID} to {self.customerID}>'

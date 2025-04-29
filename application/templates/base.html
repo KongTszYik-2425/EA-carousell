@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Flask App{% endblock %}</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 </head>
@@ -24,51 +27,25 @@
                                 <img src="{{ url_for('static', filename='images/carousell-logo-title.svg') }}"
                                     alt="Logo" width="200" height="30" class="d-inline-block align-text-top">
                             </a>
-                            <li class="nav-item active d-none d-xl-block">
-                                <a class="nav-link" href="#">電子3C</a>
-                            </li>
-                            <li class="nav-item active d-none d-xl-block">
-                                <a class="nav-link" href="#">男女时尚</a>
-                            </li>
-                            <li class="nav-item active d-none d-xl-block">
-                                <a class="nav-link" href="#">名牌精品</a>
-                            </li>
-                            <li class="nav-item active d-none d-xl-block">
-                                <a class="nav-link" href="#">服务</a>
-                            </li>
-                            <li class="nav-item active d-none d-xl-block">
-                                <a class="nav-link" href="#">汽车</a>
-                            </li>
-                            <li class="nav-item active d-none d-md-block">
-                                <a class="nav-link container" href="#">
-                                    <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo"
-                                        width="20" height="20"
-                                        class="flex-column justify-content-center  text-center ">&nbsp;
-                                    <span class="">所有分类</span>
-                                </a>
-                            </li>
                         </ul>
-                        {% if User %}
                         <ul class="nav logined-nav">
                             <!-- 登录后的导航栏 -->
                             <li class="nav-item active d-none d-md-block">
 
                                 <div class="dropdown nav-link">
-                                    <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo"
-                                        width="20" height="20"
-                                        class="flex-column justify-content-center  text-center ">&nbsp;
-                                    <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                        哈喽~{{ User.username }}
+                                    <img src="" alt="Logo" id="userAvatar" width="20" height="20"
+                                        class="flex-column justify-content-center  text-center rounded-circle">&nbsp;
+                                    <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"
+                                        id="username">
                                     </span>
                                     <div class="dropdown-menu">
-                                      <a class="dropdown-item" href="#">个人档案</a>
-                                      <a class="dropdown-item" href="#">我购买的东西</a>
-                                      <a class="dropdown-item" href="#">设定</a>
-                                      <a class="dropdown-item" href="javascript:handleLogout()">登出</a>
+                                        <a class="dropdown-item" id="profile" href="">个人档案</a>
+                                        <a class="dropdown-item" href="/user_edit">编辑资料</a>
+                                        <a class="dropdown-item" href="javascript:handleLogout()">登出</a>
                                     </div>
-                                  </div>
+                                </div>
                             </li>
-                            
+
                             <li class="nav-item active">
                                 <a class="nav-link" href="#"><img
                                         src="{{ url_for('static', filename='images/icon-heart.svg') }}" alt="Logo"
@@ -88,12 +65,11 @@
                                 </a>
                             </li>
                             <li class="nav-item active d-none d-sm-block">
-                                <button type="button" class="btn btn-danger">出售</button>
+                                <a class="btn btn-danger" href="/sell">出售</a>
                             </li>
                         </ul>
-                        {% endif %}
                         <ul class="nav unlogin-nav">
-                            
+
                             <!-- 未登录的导航栏 -->
                             <li class="nav-item active">
                                 <a href="#" class="nav-link" data-toggle="modal" data-target="#registerModal">註冊
@@ -104,7 +80,7 @@
                                 </a>
                             </li>
                             <li class="nav-item active d-none d-sm-block">
-                                <button type="button" class="btn btn-danger">出售</button>
+                                <a class="btn btn-danger" href="/sell">出售</a>
                             </li>
                         </ul>
                     </nav>
@@ -118,7 +94,7 @@
                                     src="{{ url_for('static', filename='images/icon-search.svg') }}" alt="Logo"
                                     width="20" height="20"
                                     class="flex-column justify-content-center  text-center "></span>
-                            <input type="text" placeholder="Username" aria-label="Username" id="productsearchinput"
+                            <input type="text" placeholder="" aria-label="Username" id="productsearchinput"
                                 aria-describedby="addon-wrapping">
                         </div>
 
@@ -180,12 +156,12 @@
                     <h5 class="text-center">登录</h5>
                     <form id="loginForm">
                         <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="">
+                            <label for="exampleFormControlInput1" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="login_username" placeholder="">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Password</label>
-                            <input type="text" class="form-control" id="password" placeholder="">
+                            <label for="exampleFormControlTextarea1" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="login_password" placeholder="">
                         </div>
                     </form>
                 </div>
@@ -196,7 +172,7 @@
             </div>
         </div>
     </div>
-    
+
 </body>
 {% block scripts %}
 <script>
@@ -223,6 +199,114 @@
     });
 
     $(document).ready(function () {
+        $.ajax({
+            url: '/getTopCategories',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (categorys) {
+
+                // 获取导航栏元素
+                const navElement = $('ul.nav').first();
+                console.log(categorys.length)
+                // 为每个分类创建导航项并插入到品牌链接之后
+                categorys.forEach(category => {
+                    const categoryItem = `
+                        <li class="nav-item active d-none d-xl-block">
+                            <a class="nav-link" href="/products?category=${category.categoryID}">${category.categoryName}</a>
+                        </li>
+                    `;
+
+                    // 在品牌链接之后插入
+                    navElement.append(categoryItem);
+                });
+                navElement.append(` <li class="nav-item active d-none d-md-block">
+                                <span class="nav-link container" href="#">
+                                    <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo"
+                                        width="20" height="20"
+                                        class="flex-column justify-content-center  text-center ">&nbsp;
+                                    <span class="dropdown-toggle" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                        分类
+                                </span>
+                                    <ul class="dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
+
+                                    </ul>
+                                </span>
+                            </li>`)
+                $.ajax({
+                    url: '/getCategories',
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        // 获取分类树数据
+                        let categoryTree = response;
+
+                        // 如果response是一个包含category_tree属性的对象
+                        if (response.category_tree) {
+                            categoryTree = response.category_tree;
+                        }
+
+                        // 获取下拉菜单元素
+                        const dropdownMenu = $('ul.dropdown-menu.keep-open');
+
+
+                        // 遍历分类树并生成下拉菜单项
+                        categoryTree.forEach(category => {
+                            let menuItem = `
+                        <li class="dropdown-item" id="category-${category.categoryName}">
+                            <a href="/products?category=${category.categoryID}" 
+                               onclick="drop(this)" type="button" data-toggle="collapse">
+                                ${category.categoryName}
+                            </a>
+                    `;
+
+                            // 如果有子分类，添加子分类菜单
+                            if (category.children && category.children.length > 0) {
+                                menuItem += `
+                        <li>
+                            <div class="collapse" id="drop-category-${category.categoryName}">
+                                <div class="card card-body text-center" style="width:100%">
+                        `;
+
+                                // 添加每个子分类
+                                category.children.forEach(subcategory => {
+                                    menuItem += `
+                                <a class="sub-option" href="/products?category=${subcategory.categoryID}">
+                                    ${subcategory.categoryName}
+                                </a>
+                            `;
+                                });
+
+                                menuItem += `
+                                </div>
+                            </div>
+                        </li>
+                        `;
+                            }
+                            menuItem += `</li>`;
+                            // 添加到下拉菜单
+                            dropdownMenu.append(menuItem);
+                            $('.dropdown-item').mouseenter(function () {
+                                id = $(this).attr('id');
+                                $(`#drop-${id}`).collapse('toggle');
+                            }).mouseleave(function () {
+                                id = $(this).attr('id');
+                                $(`#drop-${id}`).collapse('toggle');
+                            });
+                        });
+                    },
+                    error: function (error) {
+                        console.log('获取分类树失败', error);
+                    }
+                });
+            },
+            error: function () {
+                console.log('获取分类失败');
+            }
+        });
+
+
+
         const token = localStorage.getItem('access_token');
 
         if (token) {
@@ -233,7 +317,10 @@
                 headers: {
                     "Authorization": "Bearer " + token
                 },
-                success: function () {
+                success: function (userData) {
+                    $('#userAvatar').attr('src', userData.avatar)
+                    $('#username').text(userData.username)
+                    $('#profile').attr('href', `/userinfo?custID=${userData.custID}`)
                     $('.logined-nav').show();
                     console.log("success")
                     $('.unlogin-nav').hide();
@@ -280,8 +367,8 @@
     //登录
     $('#loginButton').click(function (e) {
         e.preventDefault();
-        var username = $('#username').val();
-        var password = $('#password').val();
+        var username = $('#login_username').val();
+        var password = $('#login_password').val();
 
         $.ajax({
             url: '/login',
@@ -294,7 +381,7 @@
             success: function (response) {
                 if (response.access_token) {
                     localStorage.setItem('access_token', response.access_token);
-                    window.location.href = `/index?token=${localStorage.getItem('access_token')}`;
+                    window.location.reload();
 
                 }
             },
@@ -306,18 +393,29 @@
 
     $('#search').click(function (e) {
         e.preventDefault();
-        var search = $('#productsearchinput').val();
-
-        if (search!='' && search!=null) {
-            window.location.href = `/products?search=${search}`;
-        }
+        search();
     });
 
+    function search(category) {
+        var search = $('#productsearchinput').val();
+
+        if (search != '' && search != null) {
+            window.location.href = `/products?search=${search}`;
+        }
+    }
     function handleLogout() {
         localStorage.removeItem('access_token');  // 清除localStorage的token
         sessionStorage.removeItem('access_token'); // 清除sessionStorage的token
 
-        window.location.reload(true); 
+        window.location.href = "/";
     }
+    $('.dropdown-menu').on("click", function (e) {
+        e.stopPropagation();
+    });
+
+    function drop(e) {
+       window.location.href = $(e).attr('href'); 
+    }
+
 </script>
 {% endblock scripts %}
