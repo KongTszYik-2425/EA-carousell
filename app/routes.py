@@ -628,7 +628,7 @@ def register():
     else:
         new_user = Customer(
             state="正常",
-            is_admin=False,
+            is_admin=True,
             username=username,
             password=password,
             firstName=firstName,
