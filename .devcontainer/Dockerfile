@@ -1,15 +1,17 @@
-# 使用官方的 Python 镜像作为基础镜像
+# 使用 Python 基础镜像
 FROM python:3.9-slim
 
 # 设置工作目录
-WORKDIR /workspace
-RUN apt-get update && apt-get install -y git
+WORKDIR /app
 
-# 暴露 Flask 应用需要的端口
+# 复制项目文件到工作目录
+COPY . /app
+
+# 安装项目依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 暴露 Flask 应用的端口
 EXPOSE 5000
 
-# 设定默认的 Flask 环境变量（可选）
-
-
-# 默认启动命令
+# 启动 Flask 应用
 CMD ["python", "app.py"]
