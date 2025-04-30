@@ -12,4 +12,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 
 # 默认启动命令
-# CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "app.py"]
