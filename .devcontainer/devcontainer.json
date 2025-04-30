@@ -1,12 +1,12 @@
 {
-  "name": "Python 3 & PostgreSQL",
+  "name": "Python 3 & MySQL",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app", 
   "hostRequirements": {
     "cpus": 2
   },
   "waitFor": "onCreateCommand",
-  "postCreateCommand": "",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "postAttachCommand": {
     "server": "flask --debug run --host=0.0.0.0"
   },
@@ -16,13 +16,9 @@
       "protocol": "http",
       "onAutoForward": "openPreview"
     },
-    "5050": {
-      "label": "pgadmin",
-      "onAutoForward": "openPreview"
-    },
-    "8025": {
-      "label": "mailhog",
-      "onAutoForward": "openPreview"
+    "3306": {
+      "label": "MySQL",
+      "onAutoForward": "notify"
     }
   },
   "customizations": {
@@ -52,16 +48,17 @@
         "ms-python.vscode-pylance",
         "samuelcolvin.jinjahtml",
         "monosans.djlint",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "cweijan.vscode-mysql-client2"
       ]
     }
   },
   "forwardPorts": [
     5000,
-    5050,
-    8025
+    3306
   ],
   "features": {
-    "ghcr.io/devcontainers/features/docker-from-docker:1": {}
+    "ghcr.io/devcontainers/features/docker-from-docker:1": {},
+    "ghcr.io/devcontainers/features/mysql-client:1": {}
   }
 }
