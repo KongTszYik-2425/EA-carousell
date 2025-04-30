@@ -48,15 +48,15 @@
                         {% for product in recent_products[i:i+5] %}
                         <div class="card col" style="border-radius: 10px;overflow: hidden;">
                             <div class="cardavatar ">
-                                <div class="fit-image avatar"><img class="clip-image" src="{{product.seller.avatarUrl}}"
+                                <div class="fit-image avatar"><img class="clip-image" src="{{product.seller.avatar}}"
                                         class="card-img-top" alt="..."></div>
                                 <div class="content">
                                     <strong>{{product.seller.username}}</strong><br><span class="text-secondary"
                                         style="font-size: 12px;"><i class="bi bi-clock"></i> {{product.time_ago}}</span>
                                 </div>
                             </div>
-                            <div class="fit-image"><img class="clip-image" src="{{product.avatarUrl}}"
-                                    class="card-img-top" alt="..."></div>
+                            <a class="fit-image" href="/product/{{product.productID}}"><img class="clip-image" src="{{product.avatarUrl}}"
+                                    class="card-img-top" alt="..."></a>
                             <div class="card-body" style="padding: 10px;">
                                 <h5 class="card-title">{{product.productName}}</h5>
                                 <p class="card-text">HK${{product.price}}</p>
@@ -176,7 +176,7 @@
 <div class="recommand container">
     <h4 style="font-weight: bold;padding: 8px;">为您推荐</h4>
     {% if hot_products %}
-    <div class="row row-cols-5 "">
+    <div class="row row-cols-5 ">
         {% for product in hot_products %}
         <div class=" card col" style="border-radius: 10px;overflow: hidden;">
         <div class="cardavatar ">
@@ -187,8 +187,8 @@
                         class="bi bi-clock"></i> {{product.time_ago}}</span>
             </div>
         </div>
-        <div class="fit-image"><img class="clip-image" src="{{product.avatarUrl}}" class="card-img-top" alt="...">
-        </div>
+        <a href="/product/{{product.productID}}" class="fit-image"><img class="clip-image" src="{{product.avatarUrl}}" class="card-img-top" alt="...">
+        </a>
         <div class="card-body" style="padding: 10px;">
             <h5 class="card-title">{{product.productName}}</h5>
             <p class="card-text">HK${{product.price}}</p>

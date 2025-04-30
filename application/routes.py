@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, creat
 from application.util import *  
 from sqlalchemy import desc
 from math import ceil
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,date
 from google.cloud import storage
 import os
 import jwt
@@ -53,7 +53,7 @@ def index():
             'praise': product.praise,
             'seller': {
                 'username': seller.username if seller else "未知用户",
-                'avatarUrl': seller.avatarUrl if seller and hasattr(seller, 'avatarUrl') else "https://media.karousell.com/media/photos/profiles/default_avatar.jpg"
+                'avatar': seller.avatar 
             }
         }
         products_with_seller.append(product_data)
@@ -96,7 +96,7 @@ def index():
             'praise': product.praise,
             'seller': {
                 'username': seller.username if seller else "未知用户",
-                'avatarUrl': seller.avatarUrl if seller and hasattr(seller, 'avatarUrl') else "https://media.karousell.com/media/photos/profiles/default_avatar.jpg"
+                'avatar': seller.avatar
             }
         }
         hot_products_with_seller.append(product_data)
@@ -567,7 +567,6 @@ def sell():
         # 其他字段处理
         flash('商品已成功发布！', 'success')
         return redirect(url_for('index'))
-    
     return render_template('sell.html',category_tree=category_tree)
 
 
@@ -658,49 +657,6 @@ def check_auth():
 
 
 
-# 后台管理路由
-@app.route('/admin/dashboard')
-def admin_dashboard():
-    # 模拟数据
-    recent_users = [
-        {
-            'username': 'Isabella Christensen',
-            'description': 'Lorem ipsum is simply...',
-            'register_time': '11 MAY 12:56',
-            'status': 'active',
-            'color': '#4e73df'
-        },
-        {
-            'username': 'Michelle Anderson',
-            'description': 'Lorem ipsum is simply text of...',
-            'register_time': '11 MAY 10:25',
-            'status': 'inactive',
-            'color': '#1cc88a'
-        },
-        {
-            'username': 'Karla Sorensen',
-            'description': 'Lorem ipsum is simply...',
-            'register_time': '9 MAY 17:16',
-            'status': 'active',
-            'color': '#36b9cc'
-        },
-        {
-            'username': 'Ida Jorgensen',
-            'description': 'Lorem ipsum is simply text of...',
-            'register_time': '13 MAY 17:46',
-            'status': 'inactive',
-            'color': '#f6c23e'
-        },
-        {
-            'username': 'Albert Anderson',
-            'description': 'Lorem ipsum is simply dummy...',
-            'register_time': '21 JULY 12:56',
-            'status': 'active',
-            'color': '#e74a3b'
-        }
-    ]
-    
-    return render_template('admin/dashboard.html', recent_users=recent_users)
 
 
 @app.route('/admin/category')
@@ -737,22 +693,6 @@ def admin_category():
                           total_pages=total_pages, 
                           current_page=page,
                           total_count=total_count)
-
-@app.route('/admin/products')
-@jwt_required()
-def admin_products():
-    return render_template('admin/products.html')
-
-@app.route('/admin/orders')
-@jwt_required()
-def admin_orders():
-    return render_template('admin/orders.html')
-
-@app.route('/admin/settings')
-@jwt_required()
-def admin_settings():
-    return render_template('admin/settings.html')
-
 
 @app.route('/admin/category/add', methods=['POST'])
 def add_category():
@@ -1249,3 +1189,134 @@ def admin_change_user_status(user_id):
     db.session.commit()
     
     return jsonify({'message': '用户状态更新成功'})
+
+@app.route('/admin/products')
+def admin_products():
+    # 获取查询参数
+    page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('search', '')
+    selected_category = request.args.get('category', '')
+    selected_state = request.args.get('state', '')
+    
+    # 每页显示的产品数量
+    per_page = 10
+    
+    # 构建查询条件
+    query = Product.query
+    
+    if search_query:
+        query = query.filter(Product.productName.like(f'%{search_query}%'))
+    
+    if selected_category:
+        query = query.filter(Product.categoryID == selected_category)
+    
+    if selected_state:
+        query = query.filter(Product.state == selected_state)
+    
+    # 获取分页数据
+    pagination = query.order_by(Product.postDate.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    products = pagination.items
+    
+    # 获取所有分类
+    categories = Category.query.all()
+    
+    return render_template(
+        'admin/products.html',
+        products=products,
+        categories=categories,
+        page=page,
+        total_pages=pagination.pages,
+        search_query=search_query,
+        selected_category=selected_category,
+        selected_state=selected_state
+    )
+
+# 管理员API - 获取产品详情
+@app.route('/admin/api/products/<int:product_id>', methods=['GET'])
+def admin_get_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    
+    # 获取分类名称
+    category = Category.query.get(product.categoryID)
+    category_name = category.categoryName if category else None
+    
+    # 获取卖家信息
+    seller = Customer.query.get(product.owner)
+    seller_name = seller.username if seller else '未知卖家'
+    
+    # 获取产品图片
+    images = []
+    if product.imagesUrl:
+        images = product.imagesUrl.split(';')
+    
+    # 构建响应数据
+    response_data = {
+        'productID': product.productID,
+        'productName': product.productName,
+        'price': product.price,
+        'description': product.description,
+        'circumstance': product.circumstance,
+        'avatarUrl': product.avatarUrl,
+        'postDate': product.postDate.strftime('%Y-%m-%d %H:%M:%S'),
+        'state': product.state,
+        'categoryName': category_name,
+        'sellerName': seller_name,
+        'deliverMethod': product.deliverMethod,
+        'otherInfo': product.otherInfo,
+        'images': images
+    }
+    
+    return jsonify(response_data)
+
+# 管理员API - 删除产品
+@app.route('/admin/api/products/<int:product_id>', methods=['DELETE'])
+def admin_delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    
+    # 删除产品
+    db.session.delete(product)
+    db.session.commit()
+    
+    return jsonify({'message': '产品删除成功'})
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    # 查询用户总数
+    user_count = Customer.query.count()
+    
+    # 查询产品总数
+    product_count = Product.query.count()
+    print(product_count)
+    
+    # 查询今日新增产品数量
+    today = date.today()
+    today_start = datetime.combine(today, datetime.min.time())
+    today_end = datetime.combine(today, datetime.max.time())
+    today_product_count = Product.query.filter(
+        Product.postDate >= today_start,
+        Product.postDate <= today_end
+    ).count()
+    
+    # 模拟一些活动记录
+    activities = [
+        {
+            'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'action': '登录系统',
+            'details': '管理员登录了系统'
+        },
+        {
+            'time': (datetime.now()).strftime('%Y-%m-%d %H:%M:%S'),
+            'action': '查看产品',
+            'details': '查看了产品列表'
+        }
+    ]
+    
+    return render_template(
+        'admin/dashboard.html',
+        admin_name='管理员',
+        last_login_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        user_count=user_count,
+        product_count=product_count,
+        today_product_count=today_product_count,
+        activities=activities
+    )    

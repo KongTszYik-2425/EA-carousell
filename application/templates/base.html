@@ -41,7 +41,7 @@
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" id="profile" href="">个人档案</a>
                                         <a class="dropdown-item" href="/user_edit">编辑资料</a>
-                                        <a class="dropdown-item d-none"  href='/admin/dashboard' id="backend" >后台管理</a>
+                                        <a class="dropdown-item d-none" href='/admin/dashboard' id="backend"  >后台管理</a>
                                         <a class="dropdown-item" href="javascript:handleLogout()">登出</a>
                                     </div>
                                 </div>
@@ -229,7 +229,7 @@
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                                         分类
                                 </span>
-                                    <ul class="dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
+                                    <ul class="dropdown-menu keep-open basedropdown" aria-labelledby="dropdownMenuButton">
 
                                     </ul>
                                 </span>
@@ -248,7 +248,7 @@
                         }
 
                         // 获取下拉菜单元素
-                        const dropdownMenu = $('ul.dropdown-menu.keep-open');
+                        const dropdownMenu = $('ul.dropdown-menu.keep-open.basedropdown');
 
 
                         // 遍历分类树并生成下拉菜单项
@@ -325,7 +325,9 @@
                     $('.logined-nav').show();
                     console.log("success")
                     $('.unlogin-nav').hide();
-                    $('#backend').show();
+                    if(userData.is_admin==1 || userData.is_admin==true){
+                        $('#backend').removeClass('d-none');
+                    }
                 },
                 error: function () {
                     // token无效时清除存储

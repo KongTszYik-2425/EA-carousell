@@ -83,20 +83,6 @@ class Customer(db.Model):
         return f'<Customer {self.username}>'
 
 
-class Comment(db.Model):
-    __tablename__ = 'comment'
-
-    commentID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    customerID = db.Column(db.Integer, nullable=False, comment='卖家ID')
-    content = db.Column(db.Text, nullable=True)
-    star = db.Column(db.Integer, nullable=False, default=0, comment='打星')
-    criticID = db.Column(db.Integer, nullable=False, comment='评论者ID')
-    commentDate = db.Column(db.DateTime, nullable=False, comment='评论时间')
-
-    def __repr__(self):
-        return f'<Comment {self.commentID} by {self.criticID}>'
-
-
 class Category(db.Model):
     __tablename__ = 'category'
 

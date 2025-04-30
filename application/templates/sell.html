@@ -45,14 +45,16 @@
                                 data-toggle="dropdown" aria-expanded="false">
                                 分类
                             </button>
-                            <ul class="dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
+                            <ul class="dropdown-menu category-dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
+                                
                                 {% for category in category_tree %}
                                 <li class="dropdown-item" id="category-{{ category.categoryName }}">
                                     <a value="{{category.categoryID}}" categoryName="{{category.categoryName }}"
                                         onclick="categorySelect(this)" type="button" data-toggle="collapse">
                                         {{ category.categoryName }}
                                     </a>
-                                    {% if category.children|length > 0 %}
+                                </li>
+                                {% if category.children|length > 0 %}
                                 <li>
                                     <div class="collapse" id="drop-category-{{ category.categoryName }}">
                                         <div class="card card-body">
@@ -67,7 +69,6 @@
                                     </div>
                                 </li>
                                 {% endif %}
-                                </li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -80,7 +81,7 @@
                     </div> -->
                 </div>
                 <h4>關於此商品</h4><br>
-                <h5 class="text-secondary">商品狀况</h5>
+                <h5 class="text-secondary">商品狀況</h5>
                 <div class="mb-3">
                     <label for="price" class="form-label">价格</label>
                     <div class="input-group">
@@ -163,7 +164,7 @@
     circumstance = "二手";
     description = ""
     otherInfo = null;
-    owner=null;
+    owner = null;
 
     //键值对逻辑
     $('#add-attribute-btn').click(function () {
@@ -330,7 +331,7 @@
     });
 
     function openDropdown() {
-        $('.dropdown-menu').dropdown('toggle')
+        $('.category-dropdown-menu').dropdown('toggle')
     }
     $('.dropdown-item').mouseenter(function () {
         id = $(this).attr('id');
@@ -404,7 +405,7 @@
     }
     function loginCheck() {
         const token = localStorage.getItem('access_token');
-        
+
         if (token) {
             // 验证token有效性
             $.ajax({
@@ -414,7 +415,7 @@
                     "Authorization": "Bearer " + token
                 },
                 success: function (userData) {
-                    owner = userData.userID;
+                    owner = userData.custID;
                 },
                 error: function () {
                     window.location.href = '/index';
