@@ -1,15 +1,23 @@
 {
-    "name": "Flask Development Environment",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
-    },
-    "appPort": [5000], // 显示 Flask 默认端口
+    "name": "Carousell Flask App",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
     "settings": {
-        "python.pythonPath": "/usr/local/bin/python"
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "python.pythonPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "python.formatting.blackPath": "/usr/local/bin/black",
+        "editor.formatOnSave": true
     },
     "extensions": [
-        "ms-python.python" // 安装 Python 扩展
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker"
     ],
-    "postCreateCommand": "pip install -r requirements.txt" // 创建后安装依赖
+    "forwardPorts": [5000, 3306],
+    "remoteUser": "root",
+    "postCreateCommand": "pip install -r requirements.txt || echo 'No requirements.txt found'"
 }
