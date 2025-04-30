@@ -6,7 +6,7 @@
     "cpus": 2
   },
   "waitFor": "onCreateCommand",
-  "postCreateCommand": "",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "postAttachCommand": {
     "server": "flask --debug run --host=0.0.0.0"
   },
