@@ -302,12 +302,18 @@ $(document).ready(function() {
         e.preventDefault();
         
         // 显示加载动画
-        image= dataURLtoFile($('#edit_avatarPreview').attr('src'));
+        const formData = new FormData();
+        image=null;
+        
+        if(!$('#edit_avatarPreview').attr('src').startsWith('http')){
+            image= dataURLtoFile($('#edit_avatarPreview').attr('src'));
+            formData.append('avatar', image,image.name);
+        }
         $('#loadingOverlay').fadeIn(200);
         console.log(image)
-        const formData = new FormData();
+        
         formData.append('custID', $('#edit_custID').val());
-        formData.append('avatar', image,image.name);
+        
         formData.append('username', $('#edit_username').val());
         formData.append('firstName', $('#edit_firstName').val());
         formData.append('lastName', $('#edit_lastName').val());

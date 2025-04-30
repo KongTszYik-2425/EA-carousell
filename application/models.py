@@ -24,22 +24,21 @@ class Customer(db.Model):
     email = db.Column(db.String(100), nullable=True)
     bornDate = db.Column(db.Date, nullable=True)
     joinDate = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, comment='注册时间')
-    avatar = db.Column(db.String(100), nullable=True, comment='头像')
+    avatar = db.Column(db.Text, nullable=True, comment='头像')
     password = db.Column(db.String(100), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, comment='是否为管理员')
+    state=db.Column(db.String(10),nullable=False,default='正常',comment='状态')
     products = db.relationship('Product', backref='customer', lazy='dynamic')
-
 
     @jwt_required()
     def get(current_user_id):
         user_data = None
         if current_user_id:
-                user = Customer.query.get(current_user_id)
-                if user:
+            user = Customer.query.get(current_user_id)
+            if user:
                     user_data = {
                         'custID': user.custID,
                         'username': user.username,
-                        'firstName': user.firstName,
-                        'lastName': user.lastName,
                         'gender': user.gender,
                         'description': user.description,
                         'businessNo': user.businessNo,
@@ -50,10 +49,11 @@ class Customer(db.Model):
                         'email': user.email,
                         'bornDate': user.bornDate.strftime('%Y-%m-%d') if user.bornDate else None,
                         'joinDate': user.joinDate.strftime('%Y-%m-%d %H:%M:%S') if user.joinDate else None,
-                        'avatar': user.avatar
-                        # 不返回密码和products
+                        'avatar': user.avatar,
+                        'is_admin': user.is_admin,
+                        'state':user.state
                     }
-        return user_data
+        return user_data    
 
     def getSimple(current_user_id):
         user_data = None
@@ -73,8 +73,9 @@ class Customer(db.Model):
                         'email': user.email,
                         'bornDate': user.bornDate.strftime('%Y-%m-%d') if user.bornDate else None,
                         'joinDate': user.joinDate.strftime('%Y-%m-%d %H:%M:%S') if user.joinDate else None,
-                        'avatar': user.avatar
-                        # 不返回密码和products
+                        'avatar': user.avatar,
+                        'is_admin': user.is_admin,
+                        'state':user.state
                     }
         return user_data    
     # 返回函数

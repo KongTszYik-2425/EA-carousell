@@ -240,7 +240,8 @@ def userinfo():
         'joined': joined_text,
         'followers': f'{user_data.followers}个人' if hasattr(user_data, 'followers') else '0个人',
         'description': user_data.description if user_data.description else '',
-        'avatar': user_data.avatar 
+        'avatar': user_data.avatar ,
+        'state':user_data.state
     }
     
     # 构建用户商品列表
@@ -616,6 +617,8 @@ def register():
         return jsonify({"status": "error", "message": "用户名已存在，请选择其他用户名。"})
     else:
         new_user = Customer(
+            state="正常",
+            is_admin=False,
             username=username,
             password=password,
             firstName=firstName,
@@ -629,7 +632,7 @@ def register():
             website=website,
             email=email,
             bornDate=bornDate,
-            avatar="data:image/png;base64,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"
+            avatar="https://hk.portal-pokemon.com/play/resources/pokedex/img/pm/2b3f6ff00db7a1efae21d85cfb8995eaff2da8d8.png"
         )
         db.session.add(new_user)
         db.session.commit()
@@ -699,10 +702,6 @@ def admin_dashboard():
     
     return render_template('admin/dashboard.html', recent_users=recent_users)
 
-@app.route('/admin/users')
-@jwt_required()
-def admin_users():
-    return render_template('admin/users.html')
 
 @app.route('/admin/category')
 def admin_category():
@@ -1082,9 +1081,11 @@ def update_user():
                 except Exception as e:
                     print(f"删除旧头像失败: {str(e)}")
             # 上传头像到存储服务并获取URL
-        avatar_url = upload_file_to_bucket(avatar_file)
-        user.avatar = avatar_url
-        
+            avatar_url = upload_file_to_bucket(avatar_file)
+            user.avatar = avatar_url
+        else:
+            # 如果用户没有上传新头像，保持原有头像
+            user.avatar = user.avatar
         # 保存更改
         db.session.commit()
         
@@ -1181,3 +1182,70 @@ def submit_review():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': f'评价提交失败: {str(e)}'}), 500
+
+# 管理员用户管理页面
+@app.route('/admin/users')
+def admin_users():
+    # 获取查询参数
+    page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('search', '')
+    status = request.args.get('status', '')
+    
+    # 每页显示的用户数量
+    per_page = 10
+    
+    # 构建查询条件
+    query = Customer.query
+    
+    if search_query:
+        query = query.filter(or_(
+            Customer.username.like(f'%{search_query}%'),
+            Customer.email.like(f'%{search_query}%')
+        ))
+    
+    if status:
+        query = query.filter(Customer.state == status,Customer.is_admin==False)
+    
+    # 获取分页数据
+    pagination = query.order_by(Customer.custID.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    users = pagination.items
+    
+    return render_template(
+        'admin/users.html',
+        users=users,
+        page=page,
+        total_pages=pagination.pages,
+        search_query=search_query,
+        status=status
+    )
+
+# 管理员API - 获取用户详情
+@app.route('/admin/api/users/<int:user_id>', methods=['GET'])
+def admin_get_user(user_id):
+    user = Customer.query.get_or_404(user_id)
+    
+    # 获取用户的商品数量
+    product_count = Product.query.filter_by(owner=user_id).count()
+    
+    return jsonify({
+        'custID': user.custID,
+        'username': user.username,
+        'email': user.email,
+        'avatar': user.avatar,
+        'gender': user.gender,
+        'joinDate': user.joinDate.strftime('%Y-%m-%d %H:%M:%S'),
+        'state': user.state,
+        'description': user.description,
+        'product_count': product_count
+    })
+
+# 管理员API - 修改用户状态
+@app.route('/admin/api/users/<int:user_id>/status', methods=['PUT'])
+def admin_change_user_status(user_id):
+    user = Customer.query.get_or_404(user_id)
+    data = request.json
+    
+    user.state = data.get('state')
+    db.session.commit()
+    
+    return jsonify({'message': '用户状态更新成功'})

@@ -41,6 +41,7 @@
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" id="profile" href="">个人档案</a>
                                         <a class="dropdown-item" href="/user_edit">编辑资料</a>
+                                        <a class="dropdown-item d-none"  href='/admin/dashboard' id="backend" >后台管理</a>
                                         <a class="dropdown-item" href="javascript:handleLogout()">登出</a>
                                     </div>
                                 </div>
@@ -122,16 +123,16 @@
                     <h5 class="text-center">建立账号</h5>
                     <form id="registerFormData">
                         <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Username</label>
+                            <label for="exampleFormControlInput1" class="form-label">用户名</label>
                             <input type="text" class="form-control" id="regUsername" placeholder="">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Email</label>
+                            <label for="exampleFormControlTextarea1" class="form-label">电子邮箱</label>
                             <input type="email" class="form-control" id="regEmail" placeholder="name@example.com">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label">Password</label>
-                            <input type="text" class="form-control" id="regPassword" placeholder="">
+                            <label for="exampleFormControlTextarea1" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="regPassword" placeholder="">
                         </div>
                     </form>
                 </div>
@@ -324,6 +325,7 @@
                     $('.logined-nav').show();
                     console.log("success")
                     $('.unlogin-nav').hide();
+                    $('#backend').show();
                 },
                 error: function () {
                     // token无效时清除存储
@@ -342,7 +344,6 @@
 
 
     $('#registerButton').click(function () {
-        alert("hello")
         const username = $('#regUsername').val();
         const password = $('#regPassword').val();
         const email = $('#regEmail').val();
@@ -350,7 +351,7 @@
         $.ajax({
             url: '/register',
             method: 'POST',
-            data: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+            data: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`,
             contentType: 'application/x-www-form-urlencoded',
             dataType: 'json',
             success: function (data) {
