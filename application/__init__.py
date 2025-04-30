@@ -16,11 +16,6 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 app.config['JWT_ALGORITHM'] = 'HS256'
 jwt = JWTManager(app)
 
-def create_app():
-    from application.customer import customer
-    app.register_blueprint(customer)
-
-create_app()
 
 from application import routes
 
