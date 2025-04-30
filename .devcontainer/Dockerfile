@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y git
 EXPOSE 5000
 
 # 设定默认的 Flask 环境变量（可选）
-ENV FLASK_APP=app.py
+
 
 # 默认启动命令
 CMD ["python", "app.py"]
