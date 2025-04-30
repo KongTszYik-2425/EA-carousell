@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}刊登商品 | Carousell{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sell.css') }}">
+<div class="container py-4">
+    <h1 class="h4 mb-4">刊登商品</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <!-- 图片上传 -->
+            <div class="col-md-4 mb-4">
+                <div class="border rounded p-3 text-center">
+                    <div id="drop-area" class="mb-3">
+                        <i class="bi bi-card-image" style="font-size: 50px;color: grey;"></i>
+                        <p>将图片拖拽到这里进行上传</p>
+                        <input type="file" id="fileInput" style="display: none;" multiple>
+                        <button type="button" class="btn btn-secondary btn-sm" id="chooseButton">上传图片</button>
+                    </div>
+
+                    <div id="preview-container">
+                        <div id="cover-preview" class="position-relative d-none" style="width: fit-content;">
+                            <p>封面</p>
+                            <img src="" class="card-img-top preview-image" alt="封面" style="max-width: 200px;
+                            max-height: 200px">
+                            <button class="btn btn-sm btn-light position-absolute" style="top: 30px; right: 5px;">
+                                <i class="bi bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 商品信息 -->
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label for="title" class="form-label">商品名称</label>
+                    <input type="text" class="form-control" id="productName" name="title" required>
+                </div>
+
+                <!-- 分类 -->
+                <div class="mb-3">
+                    <div class="input-group is-invalid">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-expanded="false">
+                                分类
+                            </button>
+                            <ul class="dropdown-menu category-dropdown-menu keep-open" aria-labelledby="dropdownMenuButton">
+                                
+                                {% for category in category_tree %}
+                                <li class="dropdown-item" id="category-{{ category.categoryName }}">
+                                    <a value="{{category.categoryID}}" categoryName="{{category.categoryName }}"
+                                        onclick="categorySelect(this)" type="button" data-toggle="collapse">
+                                        {{ category.categoryName }}
+                                    </a>
+                                </li>
+                                {% if category.children|length > 0 %}
+                                <li>
+                                    <div class="collapse" id="drop-category-{{ category.categoryName }}">
+                                        <div class="card card-body">
+                                            {% for subcategory in category.children %}
+                                            <a class="sub-option" onclick="categorySelect(this)"
+                                                value="{{subcategory.categoryID}}"
+                                                categoryName="{{subcategory.categoryName }}">
+                                                {{subcategory.categoryName }}
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <input type="text" class="form-control bg-white" id="categoryInput" disabled required>
+
+                        </input>
+                    </div>
+                    <!-- <div class="invalid-feedback">
+                        需要选择一个有效选项
+                    </div> -->
+                </div>
+                <h4>關於此商品</h4><br>
+                <h5 class="text-secondary">商品狀況</h5>
+                <div class="mb-3">
+                    <label for="price" class="form-label">价格</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">HK$</span>
+                        </div>
+                        <input type="number" class="form-control" id="price" name="price" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">商品描述</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">其他属性</label>
+                    <div id="custom-attributes-container">
+                        <!-- 这里会动态添加自定义属性输入框 -->
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary mt-2" id="add-attribute-btn">
+                        <i class="bi bi-plus"></i> 添加属性
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label for="condition" class="form-label">商品状况</label>
+                    <div>
+                        <button type="button" class="btn btn-outline-primary conditionBtn" value="全新"
+                            onclick="selectCondition(this)">全新</button>
+                        <button type="button" class="btn btn-outline-primary conditionBtn active" value="二手"
+                            onclick="selectCondition(this)">二手</button>
+                    </div>
+                </div>
+                <div class="form-group form-check mb-3">
+                    <input type="radio" required class="form-check-input" name="deliverMethod" id="deliverMethod1"
+                        value="面交">
+                    <label class="form-check-label" for="deliverMethod1">面交</label>
+                    <hr>
+                    <input type="radio" required class="form-check-input" name="deliverMethod" id="deliverMethod2"
+                        value="邮寄">
+                    <label class="form-check-label" for="deliverMethod2">邮寄</label>
+                </div>
+                <button id="post" class="btn btn-primary">立即刊登</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">商品状态</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                发布成功！
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .img-fluid {
+        max-height: 200px;
+        object-fit: cover;
+    }
+</style>
+<script>
+    //表单属性
+    categoryID = null;
+    categoryName = null;
+    price = 0;
+    handDeliver = $('input[name="deliverMethod"]:checked').val();
+    circumstance = "二手";
+    description = ""
+    otherInfo = null;
+    owner = null;
+
+    //键值对逻辑
+    $('#add-attribute-btn').click(function () {
+        addAttributeRow();
+    });
+
+    // 删除属性行的事件委托
+    $('#custom-attributes-container').on('click', '.remove-attribute-btn', function () {
+        $(this).closest('.attribute-row').remove();
+        updateOtherInfo();
+    });
+
+    // 属性值变化时更新otherInfo
+    $('#custom-attributes-container').on('input', '.attribute-key, .attribute-value', function () {
+        updateOtherInfo();
+    });
+
+    function addAttributeRow() {
+        const rowId = 'attr-' + Date.now();
+        const newRow = `
+            <div class="attribute-row row mb-2" id="${rowId}">
+                <div class="col-5">
+                    <input required type="text" class="form-control attribute-key" placeholder="属性名称">
+                </div>
+                <div class="col-5">
+                    <input required type="text" class="form-control attribute-value" placeholder="描述">
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-outline-danger remove-attribute-btn">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#custom-attributes-container').append(newRow);
+    }
+
+    // 更新otherInfo对象
+    function updateOtherInfo() {
+        const attributes = {};
+        $('.attribute-row').each(function () {
+            const key = $(this).find('.attribute-key').val().trim();
+            const value = $(this).find('.attribute-value').val().trim();
+            if (key && value) {
+                attributes[key] = value;
+            }
+        });
+        otherInfo = JSON.stringify(attributes);
+        console.log("更新的自定义属性:", otherInfo);
+    }
+
+    function selectCondition(ele) {
+        // 处理选择商品状况的逻辑
+        $('.conditionBtn').removeClass('active');
+        $(ele).addClass('active')
+        circumstance = $(ele).val();
+    }
+
+    $('#uploadButton').click(function () {
+        $('#fileInput').click();
+    });
+
+    $('#cover-preview button').on('click', function (e) {
+        e.preventDefault();
+
+        // 查找是否有其他预览图片
+        const otherPreviewImages = $('.preview-item .preview-image');
+        if (otherPreviewImages.length > 0) {
+            // 获取第一张预览图片的src和它的父元素
+            const firstImageSrc = otherPreviewImages.first().attr('src');
+            const firstImageItem = otherPreviewImages.first().closest('.preview-item');
+
+            // 设置为封面
+            coverPreview.attr('src', firstImageSrc);
+            $('#cover-preview').removeClass('d-none');
+
+            // 移除该预览图片
+            firstImageItem.remove();
+        } else {
+            // 如果没有其他预览图片，隐藏封面预览并重置上传状态
+            $('#cover-preview').addClass('d-none');
+            coverPreview.attr('src', '');
+            isFirstUpload = true;
+        }
+    });
+
+    function handleFiles(files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type.match('image.*')) {
+                const reader = new FileReader();
+                const img = $('<img>').addClass('preview-image').addClass('position-relative');
+                reader.onload = function (e) {
+                    img.attr('src', e.target.result);
+                };
+                const previewItem = $('<div>').addClass('position-relative preview-item');
+                const button = $('<button>').addClass('btn btn-sm btn-light position-absolute').css({ 'top': '10px', 'right': '10px' });
+                const icon = $('<i>').addClass('bi bi-x-lg');
+                button.append(icon);
+
+                // 添加删除按钮的点击事件
+                button.on('click', function (e) {
+                    e.preventDefault();
+                    $(this).closest('.preview-item').remove();
+                });
+
+                previewItem.append(img);
+                previewItem.append(button);
+                reader.onload = function (e) {
+                    img.attr('src', e.target.result);
+                    if (isFirstUpload) {
+                        coverPreview.attr('src', e.target.result);
+                        isFirstUpload = false;
+                        $('#cover-preview').removeClass('d-none');
+                    }
+                };
+                reader.readAsDataURL(file);
+                if (!isFirstUpload) {
+                    previewContainer.append(previewItem);
+                }
+            }
+        }
+    }
+
+    const dropArea = $('#drop-area');
+    const fileInput = $('#fileInput');
+    const chooseButton = $('#chooseButton');
+    const previewContainer = $('#preview-container');
+    const coverPreview = $('#cover-preview img');
+    let isFirstUpload = true;
+
+    // 阻止默认的拖放行为
+    dropArea.on('dragenter dragover dragleave drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    // 当文件拖入时添加高亮样式
+    dropArea.on('dragenter dragover', function () {
+        $(this).addClass('highlight');
+    });
+
+    // 当文件拖出时移除高亮样式
+    dropArea.on('dragleave drop', function () {
+        $(this).removeClass('highlight');
+    });
+
+    // 处理文件拖拽到区域内并释放的事件
+    dropArea.on('drop', function (e) {
+        const dt = e.originalEvent.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    });
+
+    // 处理选择文件按钮点击事件
+    chooseButton.on('click', function () {
+        fileInput.click();
+    });
+
+    // 处理文件选择框的 change 事件
+    fileInput.on('change', function () {
+        const files = this.files;
+        handleFiles(files);
+    });
+
+    function openDropdown() {
+        $('.category-dropdown-menu').dropdown('toggle')
+    }
+    $('.dropdown-item').mouseenter(function () {
+        id = $(this).attr('id');
+        $(`#drop-${id}`).collapse('toggle');
+    }).mouseleave(function () {
+        id = $(this).attr('id');
+        $(`#drop-${id}`).collapse('toggle');
+    });
+
+
+    function categorySelect(ele) {
+        categoryID = $(ele).attr('value');
+        categoryName = $(ele).attr('categoryName');
+        $('#categoryInput').val(categoryName);
+    }
+
+    function removePreview(ele) {
+        $(ele).parent().remove();
+    }
+
+    $('#post').on('click', function (e) {
+        e.preventDefault();
+        productName = $('#productName').val();
+        price = $('#price').val();
+        description = $('#description').val();
+        deliverMethod = $('input[name="deliverMethod"]:checked').val();
+        const formData = new FormData($('#uploadForm')[0]);
+        previewImages = $('.preview-image');
+        previewImages.each(function (currentValue, index, arr) {
+            const imgSrc = $(this).attr('src');
+            // 将 DataURL 格式的图片数据添加到 FormData 中
+            const dataUrl = imgSrc;
+            const blob = dataURLtoBlob(dataUrl);
+            const fileName = 'preview_image_' + index + '.png';
+            formData.append('preview_images', blob, fileName);
+        });
+        formData.append('productName', productName);
+        formData.append('categoryID', parseInt(categoryID));
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('deliverMethod', deliverMethod);
+        formData.append('circumstance', circumstance);
+        formData.append('otherInfo', otherInfo);
+        formData.append('owner', owner);
+        $.ajax({
+            url: '/uploadProduct',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $('#staticBackdrop').modal('toggle')
+            },
+            error: function (error) {
+                alert('上传失败');
+            }
+        });
+        return false;
+    });
+
+    function dataURLtoBlob(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+    function loginCheck() {
+
+            $.ajax({
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
+                    owner = userData.custID;
+                },
+                error: function () {
+                    window.location.href = '/index';
+                }
+            });
+        
+    }
+    loginCheck()
+</script>
+{% endblock %}

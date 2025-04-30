@@ -1,0 +1,66 @@
+
+.carouselContainer{
+    position: relative;
+    margin: 0 auto;
+    /* margin-top: 140px; */
+    width: 1328px;
+    height: fit-content;
+    
+}
+.carousel{
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    margin: 0 auto;
+    height: 272px;
+    transition: 0.5s;
+}
+.carouselinner{
+    position: absolute;
+    margin: 0 auto;
+    height: 272px;
+    transition: 0.5s;
+    left: 0px;
+}
+.carousel .carouselitem{
+    border-radius: 30px;
+    padding: 8px;
+    width: 664px;
+    display: inline-block;
+    overflow: hidden;
+}
+.carousel .carouselitem img{
+    border-radius: 10px;
+}
+.carousel-control-next,
+.carousel-control-prev {
+    filter: invert(100%);
+}
+.carousel-control-prev{
+    left: -1%;
+}
+.carousel-control-next{
+    right: -1%;
+}
+.carouselbutton{
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(0, 0, 0);
+    transform: translateY(-50%);
+    box-shadow: 0px 0px 5px 1px rgb(255, 255, 255);
+    border-radius: 50%;
+}
+.seller{
+    border-radius: 10px;
+    box-shadow: 0px 0px 1px black;
+    height: 100%;
+    padding: 20px;
+}
+.h5{
+    font-weight:800;
+}
+hr{
+    margin-top: 40px;
+    margin-bottom: 40px;
+}

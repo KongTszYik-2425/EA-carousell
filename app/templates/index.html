@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+<div class=" carouselContainer d-none d-xl-block">
+
+    <div id="carousel" class="carousel slide" data-ride="carousel">
+        <div class="carouselinner row">
+            <div class="carouselitem">
+                <img src="https://media.karousell.com/media/photos/special-collection/2024/11/21/210b345029cce775_(1500,610)"
+                    style="height: 263.415px; width: 648px;">
+            </div>
+            <div class="carouselitem">
+                <img src="https://media.karousell.com/media/photos/special-collection/2025/03/10/6436b138c986cc47_(1500,610)"
+                    style="height: 263.415px; width: 648px;">
+
+            </div>
+            <div class="carouselitem">
+                <img src="https://media.karousell.com/media/photos/special-collection/2024/08/22/2ba8f8c603f2e466_(1500,610)"
+                    style="height: 263.415px; width: 648px;">
+            </div>
+            <div class="carouselitem">
+                <img src="https://media.karousell.com/media/photos/special-collection/2025/02/22/7c877230b46aa447_(1500,610)"
+                    style="height: 263.415px; width: 648px;">
+            </div>
+        </div>
+
+    </div>
+    <a class="carousel-control-prev carouselbutton" role="button" data-slide="prev" onclick="carouselscroll(-1)">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next carouselbutton" role="button" data-slide="next" onclick="carouselscroll(1)">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+<div class="choiceness">
+    <h4 style="font-weight: bold;padding: 8px;">每日精選</h4>
+    {% if recent_products %}
+    <div class="carouselContainer" style="width: 100%;">
+        <div id="carouselChoicenessIndicators" class="carousel slide" data-ride="carousel" style="height: auto;">
+            <div class="carousel-inner">
+                {% for i in range(0, recent_products|length, 5) %}
+                <div class="carousel-item {% if i == 0 %}active{% endif %}">
+                    <div class="row ">
+                        {% for product in recent_products[i:i+5] %}
+                        <div class="card col" style="border-radius: 10px;overflow: hidden;">
+                            <div class="cardavatar ">
+                                <div class="fit-image avatar"><img class="clip-image" src="{{product.seller.avatar}}"
+                                        class="card-img-top" alt="..."></div>
+                                <div class="content">
+                                    <strong>{{product.seller.username}}</strong><br><span class="text-secondary"
+                                        style="font-size: 12px;"><i class="bi bi-clock"></i> {{product.time_ago}}</span>
+                                </div>
+                            </div>
+                            <a class="fit-image" href="/product/{{product.productID}}"><img class="clip-image" src="{{product.avatarUrl}}"
+                                    class="card-img-top" alt="..."></a>
+                            <div class="card-body" style="padding: 10px;">
+                                <h5 class="card-title">{{product.productName}}</h5>
+                                <p class="card-text">HK${{product.price}}</p>
+                                <br>
+                                <div style="display: flex;align-items: center;">
+                                    <svg class="like" t="1742633632265" class="icon" viewBox="0 0 1204 1024"
+                                        version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2627" width="18"
+                                        height="18">
+                                        <path
+                                            d="M602.273684 1024q-55.242105 0-156.968421-64.673684T246.568421 796.294737q-109.136842-111.831579-173.810526-226.357895-72.757895-133.389474-72.757895-249.263158 0-87.578947 43.115789-161.010526T159.663158 43.115789Q233.094737 0 318.652632 0T491.789474 37.726316q57.936842 25.6 110.48421 64.673684 52.547368-39.073684 110.484211-64.673684Q800.336842 0 885.894737 0t158.989474 43.115789Q1118.315789 86.231579 1161.431579 159.663158T1204.547368 320.673684q0 115.873684-72.757894 249.263158-64.673684 114.526316-173.810527 226.357895-97.010526 98.357895-198.736842 163.031579T602.273684 1024zM319.326316 75.452632q-66.021053 0-121.936842 33.010526t-88.926316 88.926316Q75.452632 253.305263 75.452632 320.673684q0 83.536842 45.810526 179.2 40.421053 83.536842 114.526316 169.768421 63.326316 75.452632 142.821052 144.168421 71.410526 59.284211 134.063158 97.010527t89.6 37.726315q26.947368 0 89.6-37.726315t134.063158-97.010527q79.494737-68.715789 142.821053-144.168421 74.105263-86.231579 114.526316-169.768421 45.810526-95.663158 45.810526-179.2 0-67.368421-33.010526-123.28421t-88.926316-88.926316Q951.242105 75.452632 885.221053 75.452632q-87.578947 0-180.547369 51.2-48.505263 25.6-76.8 52.547368-10.778947 9.431579-25.6 9.431579t-24.252631-9.431579q-9.431579-9.431579-37.726316-26.947368-44.463158-30.989474-91.621053-49.852632-67.368421-26.947368-129.347368-26.947368z"
+                                            p-id="2628"></path>
+                                    </svg>&nbsp;{{product.praise|default(0)}}
+                                    <svg t="1742633795851" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                        style="margin-left: auto;" xmlns="http://www.w3.org/2000/svg" p-id="7028"
+                                        width="18" height="18">
+                                        <path
+                                            d="M426.666667 512a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0zM426.666667 256a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0zM426.666667 768a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0z"
+                                            fill="#0D0D0D" p-id="7029"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <a class="carousel-control-prev carouselbutton" href="#carouselChoicenessIndicators" role="button"
+            data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next carouselbutton" href="#carouselChoicenessIndicators" role="button"
+            data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+    {% else %}
+    <div class="empty-products-container text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+        <h5 class="mt-3">暂无今日精选产品</h5>
+        <p class="text-muted">请稍后再来查看</p>
+    </div>
+    {% endif %}
+</div>
+<div class="whatYouFind container">
+    <div class="align-center">
+        <h4 style="font-weight: bold;padding: 8px;width: fit-content;">What would you like to find?</h4>
+        <a class="align-center" href="#" style="margin-left: auto;">
+            <img src="{{ url_for('static', filename='images/icon-category.svg') }}" alt="Logo" width="20" height="20"
+                class="flex-column justify-content-center  text-center ">&nbsp;
+            <span class="">所有分类</span>
+    </div>
+    </a>
+    <div class="row gx-2 justify-content-around">
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/73/2020/01/22/56-Property-cxxhdpi_1579664037.67.png"
+                    title="" style="border-radius: 8px;">
+                <div>Property</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/22/2020/01/22/56-Cars-cxxhdpi_1579663915.34.png"
+                    title="" style="border-radius: 8px;">
+                <div>Cars</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/1758/2020/01/22/56-Services-cxxhdpi_1579665464.54.png"
+                    title="" style="border-radius: 8px;">
+                <div>Services</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/main_v2/02_mobile_phones_gadgets.png"
+                    title="" style="border-radius: 8px;">
+                <div>Mobile Phones</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/main_v2/08_womens_fashion.png"
+                    title="" style="border-radius: 8px;">
+                <div>Women's Fashion</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/main_v2/09_mens_fashion.png"
+                    title="" style="border-radius: 8px;">
+                <div>Men's Fashion</div>
+            </div>
+        </div>
+        <div class="findcard col">
+            <div class="p-4 border bg-light">
+                <img class="D_ze"
+                    src="https://media.karousell.com/media/photos/country-collections/icons/main_v2/10_luxury.png"
+                    title="" style="border-radius: 8px;">
+                <div>Luxury</div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="recommand container">
+    <h4 style="font-weight: bold;padding: 8px;">为您推荐</h4>
+    {% if hot_products %}
+    <div class="row row-cols-5 ">
+        {% for product in hot_products %}
+        <div class=" card col" style="border-radius: 10px;overflow: hidden;">
+        <div class="cardavatar ">
+            <div class="fit-image avatar"><img class="clip-image" src="{{product.seller.avatar}}" class="card-img-top"
+                    alt="..."></div>
+            <div class="content">
+                <strong>{{product.seller.username}}</strong><br><span class="text-secondary" style="font-size: 12px;"><i
+                        class="bi bi-clock"></i> {{product.time_ago}}</span>
+            </div>
+        </div>
+        <a href="/product/{{product.productID}}" class="fit-image"><img class="clip-image" src="{{product.avatarUrl}}" class="card-img-top" alt="...">
+        </a>
+        <div class="card-body" style="padding: 10px;">
+            <h5 class="card-title">{{product.productName}}</h5>
+            <p class="card-text">HK${{product.price}}</p>
+            <br>
+            <div style="display: flex;align-items: center;">
+                <svg class="like" t="1742633632265" class="icon" viewBox="0 0 1204 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="2627" width="18" height="18">
+                    <path
+                        d="M602.273684 1024q-55.242105 0-156.968421-64.673684T246.568421 796.294737q-109.136842-111.831579-173.810526-226.357895-72.757895-133.389474-72.757895-249.263158 0-87.578947 43.115789-161.010526T159.663158 43.115789Q233.094737 0 318.652632 0T491.789474 37.726316q57.936842 25.6 110.48421 64.673684 52.547368-39.073684 110.484211-64.673684Q800.336842 0 885.894737 0t158.989474 43.115789Q1118.315789 86.231579 1161.431579 159.663158T1204.547368 320.673684q0 115.873684-72.757894 249.263158-64.673684 114.526316-173.810527 226.357895-97.010526 98.357895-198.736842 163.031579T602.273684 1024zM319.326316 75.452632q-66.021053 0-121.936842 33.010526t-88.926316 88.926316Q75.452632 253.305263 75.452632 320.673684q0 83.536842 45.810526 179.2 40.421053 83.536842 114.526316 169.768421 63.326316 75.452632 142.821052 144.168421 71.410526 59.284211 134.063158 97.010527t89.6 37.726315q26.947368 0 89.6-37.726315t134.063158-97.010527q79.494737-68.715789 142.821053-144.168421 74.105263-86.231579 114.526316-169.768421 45.810526-95.663158 45.810526-179.2 0-67.368421-33.010526-123.28421t-88.926316-88.926316Q951.242105 75.452632 885.221053 75.452632q-87.578947 0-180.547369 51.2-48.505263 25.6-76.8 52.547368-10.778947 9.431579-25.6 9.431579t-24.252631-9.431579q-9.431579-9.431579-37.726316-26.947368-44.463158-30.989474-91.621053-49.852632-67.368421-26.947368-129.347368-26.947368z"
+                        p-id="2628"></path>
+                </svg>&nbsp;{{product.praise}}
+                <svg t="1742633795851" class="icon" viewBox="0 0 1024 1024" version="1.1" style="margin-left: auto;"
+                    xmlns="http://www.w3.org/2000/svg" p-id="7028" width="18" height="18">
+                    <path
+                        d="M426.666667 512a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0zM426.666667 256a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0zM426.666667 768a85.333333 85.333333 0 1 0 170.666666 0 85.333333 85.333333 0 0 0-170.666666 0z"
+                        fill="#0D0D0D" p-id="7029"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% else %}
+<div class="empty-products-container text-center py-5">
+    <i class="bi bi-box2-heart text-muted" style="font-size: 3rem;"></i>
+    <h5 class="mt-3">暂无推荐产品</h5>
+    <p class="text-muted">我们正在为您寻找合适的推荐</p>
+</div>
+{% endif %}
+</div>
+
+
+<!-- Modal -->
+
+<script>
+
+
+    $(document).ready(function () {
+        widthOfCarousel = $('#carousel .carouselinner').children().length * 664 + 20
+        $('#carousel .carouselinner').css('width', `${widthOfCarousel}px`);
+    })
+
+
+    //轮播图
+    var currentPictureNo = 0;
+    function carouselscroll(param) {
+        if (parseInt(param) == -1) {
+            currentPictureNo = currentPictureNo > 0 ? currentPictureNo - 1 : currentPictureNo;
+        } else {
+            currentPictureNo = currentPictureNo < $('#carousel .carouselinner').children().length - 2 ? currentPictureNo + 1 : currentPictureNo;
+        }
+        console.log(currentPictureNo);
+        $('#carousel .carouselinner').css('left', `${currentPictureNo * -664}px`)
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,262 @@
+ul li:hover{
+    background-color: rgb(240, 240, 240);
+}
+ul li:hover a{
+    transition:0.2s;
+    color:gray;
+}
+.full-height {
+    height: 100vh; /* 使容器充满整个视口高度 */
+    display: grid;
+    grid-template-columns: auto 1fr; /* 图片和文本各占一列 */
+    align-items: center; /* 垂直居中 */
+}
+.row{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+ul li a{
+    color:black;
+}
+#searchframe{
+    border:none;
+    border-radius:5px 0px 0px 5px;
+    background-color:rgb(240, 240, 240) !important;
+}
+#productsearch{
+    background-color: rgb(240, 240, 240);
+    padding:5px;
+    position:relative;
+    border:1px solid rgb(210, 210, 210);
+    border-radius:5px 5px 5px 5px;
+}
+#productsearchinput{
+    width:100%;
+    border:none;
+    outline:none;
+    border-radius:0px 5px 5px 0px;
+    background-color: rgb(240, 240, 240);
+}
+.focused{
+    border:2px solid black;
+    border-radius:5px;
+    box-shadow:0px 0px 0px 4px rgb(230, 230, 230);
+}
+.navContainer{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: white;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(230, 230, 230);
+}
+.navbarContainer{
+    border-bottom: 1px solid rgb(230, 230, 230);
+}
+.searchBarContainer{
+    padding-top: 10px;
+}
+.carouselContainer{
+    position: relative;
+    margin: 0 auto;
+    /* margin-top: 140px; */
+    width: 1328px;
+    height: fit-content;
+    
+}
+.carousel{
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    margin: 0 auto;
+    height: 272px;
+    transition: 0.5s;
+}
+.carouselinner{
+    position: absolute;
+    margin: 0 auto;
+    height: 272px;
+    transition: 0.5s;
+    left: 0px;
+}
+.carousel .carouselitem{
+    border-radius: 30px;
+    padding: 8px;
+    width: 664px;
+    display: inline-block;
+    overflow: hidden;
+}
+.carousel .carouselitem img{
+    border-radius: 10px;
+}
+.carousel-control-next,
+.carousel-control-prev {
+    filter: invert(100%);
+}
+.carousel-control-prev{
+    left: -1%;
+}
+.carousel-control-next{
+    right: -1%;
+}
+.carouselbutton{
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(0, 0, 0);
+    transform: translateY(-50%);
+    box-shadow: 0px 0px 5px 1px rgb(255, 255, 255);
+    border-radius: 50%;
+}
+.guessYouLove{
+    width: 1300px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.lovecard{
+    /* margin-right: 70px; */
+    overflow: hidden;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;           /* 主轴方向为水平方向 */
+    background-color: #f0f0f0;
+}
+.lovecard .lovecard-main{
+    position: relative;
+    width: 279px;
+    height: 228px;
+    overflow: hidden;
+    margin-right: 5px;
+}
+.lovecard .lovecard-main>img{
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(1.2);
+}
+.lovecard .lovecard-sub>div{
+    position: relative;
+    width: 112px;
+    height: 112px;
+    overflow: hidden;
+}
+.lovecard .lovecard-sub>div>img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(0.5);
+}
+.lovecardcontent h4{
+    padding: 8px;
+}
+.choiceness{
+    max-width: 1328px;
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 20px;
+    position: relative;
+}
+.choiceness .card{
+    position: relative;
+    width: 16vw;
+    max-width: 260px;
+    border: none;
+    padding: 0.1vw;
+    transition: 0.2s;
+}
+.card:hover{
+    z-index: 10;
+    border: none;
+    box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.315);
+}
+.fit-image {
+    border-radius: 5px;
+    margin: 0 auto;
+    object-fit: cover;
+    width: 13vw;
+    height: 13vw;       
+    max-width: 243px;
+    max-height: 243px; 
+    overflow: hidden;
+    position: relative;
+}
+.fit-image>img{
+    width: 100%;
+    height: 100%;  
+    object-fit: cover;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.card-title{
+    font-size: 20px;
+}
+.cardavatar .avatar{
+    vertical-align:middle;
+    border-radius: 50%;
+    /* overflow: hidden; */
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+}
+.cardavatar{
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 8px;
+}
+.container{
+    /* margin-top: 20px; */
+    max-width: 1328px;
+    position: relative;
+}
+.align-center{
+    display: flex;
+    align-items: center;
+}
+.cardavatar .content{
+    width: 50%;
+    white-space: nowrap; /* 不换行 */
+    text-overflow: ellipsis; /* 溢出文本显示为省略号 */
+    overflow: hidden;
+    line-height: 16px;
+}
+.cardavatar>div{
+    flex-shrink :0;
+    flex-grow:0;
+}
+.choicenessTitle{
+    font-weight: bold;
+    /* line-height: 5px; */
+}
+.choicenessTime{
+    line-height: 1px;
+}
+.findcard>div{
+    height: 100%;
+    border-radius: 5px;
+    text-align: center;
+    overflow: hidden;
+}
+.findcard img{
+    width: 72px;
+    height: 72px;
+}
+.whatYouFind .row>div{
+    height: 170px;
+    position: relative;
+}
+.card{
+    transition: 0.2s;
+    padding: 0px;
+    width: fit-content;
+    margin-bottom: 10px;
+    border: none;
+}
+.like{
+    cursor: pointer;
+}

@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-2 offset-md-1">
+            <div class="list-group shadow-sm">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-person-fill me-2"></i> 编辑个人资料
+                </a>
+                <a href="/change_password" class="list-group-item list-group-item-action">
+                    <i class="bi bi-key-fill me-2"></i> 修改密码
+                </a>
+            </div>
+        </div>
+        <div class="col-8 ">
+            <div class="card" style="box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.274);margin-bottom: 20px;">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">编辑个人资料</h4>
+                </div>
+                <div class="card-body">
+                    <form id="userEditForm" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="edit_custID" name="custID">
+                        
+                        <!-- 头像上传 -->
+                        <div class="form-group mb-4">
+                            <label for="edit_avatarUpload" class="form-label fw-bold mb-3">个人头像</label>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-container position-relative me-4">
+                                    <img id="edit_avatarPreview" src="{{ url_for('static', filename='images/avatar.png') }}" 
+                                         class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;">
+                                    <div class="avatar-overlay">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="avatar-upload-info" style="margin-left:20px ;">
+                                    <div class="avatar-tips">
+                                        <small class="text-muted d-block">支持 JPG, PNG, GIF 格式</small>
+                                        <small class="text-muted d-block">建议上传正方形图片，最大 2MB</small>
+                                    </div>
+                                    <div class="custom-file-upload mb-2">
+                                        <label for="edit_avatarUpload" class="btn btn-outline-primary">
+                                            <i class="bi bi-upload me-1"></i> 上传头像
+                                        </label>
+                                        <input type="file" class="form-control d-none" id="edit_avatarUpload" name="avatar">
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <!-- 基本信息 -->
+                        <div class="form-group mb-3">
+                            <label for="edit_username">用户名</label>
+                            <input type="text" class="form-control" id="edit_username" name="username" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="edit_firstName">名字</label>
+                                    <input type="text" class="form-control" id="edit_firstName" name="firstName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="edit_lastName">姓氏</label>
+                                    <input type="text" class="form-control" id="edit_lastName" name="lastName">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_gender">性别</label>
+                            <select class="form-control" id="edit_gender" name="gender">
+                                <option value="">请选择</option>
+                                <option value="M">男</option>
+                                <option value="F">女</option>
+                                <option value="O">其他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_email">电子邮箱</label>
+                            <input type="email" class="form-control" id="edit_email" name="email">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_bornDate">出生日期</label>
+                            <input type="date" class="form-control" id="edit_bornDate" name="bornDate">
+                        </div>
+                        
+                        <hr>
+                        
+                        <!-- 商家信息 -->
+                        <h5 class="mb-3">商家信息</h5>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_description">个人简介</label>
+                            <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_marketPlace">营业地点</label>
+                            <input type="text" class="form-control" id="edit_marketPlace" name="marketPlace" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_businessNo">商业联系电话</label>
+                            <input type="text" class="form-control" id="edit_businessNo" name="businessNo">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="edit_startBusinessTime">开始营业时间</label>
+                                    <input type="time" class="form-control" id="edit_startBusinessTime" name="startBusinessTime">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="edit_endBusinessTime">结束营业时间</label>
+                                    <input type="time" class="form-control" id="edit_endBusinessTime" name="endBusinessTime">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="edit_website">网站链接</label>
+                            <input type="url" class="form-control" id="edit_website" name="website">
+                        </div>
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">保存修改</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 加载动画 -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner-border text-danger" role="status" style="width: 3rem; height: 3rem;">
+            <span class="sr-only">加载中...</span>
+        </div>
+        <div class="loading-text">正在处理，请稍候...</div>
+    </div>
+</div>
+
+<style>
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    
+    .loading-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .loading-text {
+        margin-top: 10px;
+        color: #333;
+        font-weight: bold;
+    }
+    
+    /* 头像上传样式 */
+    .avatar-container {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .avatar-container:hover .avatar-overlay {
+        opacity: 1;
+    }
+    
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .avatar-overlay i {
+        color: white;
+        font-size: 2rem;
+    }
+    
+    .custom-file-upload label {
+        cursor: pointer;
+    }
+    
+    .avatar-tips {
+        margin-top: 8px;
+    }
+</style>
+
+<script>
+$(document).ready(function() {
+    // 显示加载动画
+    $('#loadingOverlay').fadeIn(200);
+    
+    
+    // 验证token并获取用户信息
+    $.ajax({
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
+            // 填充表单数据
+            $('#edit_custID').val(userData.custID);
+            $('#edit_username').val(userData.username);
+            $('#edit_firstName').val(userData.firstName);
+            $('#edit_lastName').val(userData.lastName);
+            $('#edit_gender').val(userData.gender);
+            $('#edit_email').val(userData.email);
+            $('#edit_bornDate').val(userData.bornDate);
+            $('#edit_description').val(userData.description);
+            $('#edit_marketPlace').val(userData.marketPlace);
+            $('#edit_businessNo').val(userData.businessNo);
+            $('#edit_startBusinessTime').val(userData.startBusinessTime);
+            $('#edit_endBusinessTime').val(userData.endBusinessTime);
+            $('#edit_website').val(userData.website);
+            
+            // 如果有头像，设置预览
+            if (userData.avatar) {
+                $('#edit_avatarPreview').attr('src', userData.avatar);
+            }
+            
+            // 隐藏加载动画
+            $('#loadingOverlay').fadeOut(200);
+        },
+        error: function(xhr) {
+            // 隐藏加载动画
+            $('#loadingOverlay').fadeOut(200);
+            
+            // 显示错误信息
+            let errorMsg = '请先登录';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            alert(errorMsg);
+            
+            // 返回首页
+            window.location.href = '/index';
+        }
+    });
+    
+    // 头像容器点击触发文件上传
+    $('.avatar-container').click(function() {
+        $('#edit_avatarUpload').click();
+    });
+    
+    // 头像预览
+    $('#edit_avatarUpload').change(function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#edit_avatarPreview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // 表单提交
+    $('#userEditForm').submit(function(e) {
+        e.preventDefault();
+        
+        // 显示加载动画
+        const formData = new FormData();
+        image=null;
+        
+        if(!$('#edit_avatarPreview').attr('src').startsWith('http')){
+            image= dataURLtoFile($('#edit_avatarPreview').attr('src'));
+            formData.append('avatar', image,image.name);
+        }
+        $('#loadingOverlay').fadeIn(200);
+        console.log(image)
+        
+        formData.append('custID', $('#edit_custID').val());
+        
+        formData.append('username', $('#edit_username').val());
+        formData.append('firstName', $('#edit_firstName').val());
+        formData.append('lastName', $('#edit_lastName').val());
+        formData.append('gender', $('#edit_gender').val());
+        formData.append('email', $('#edit_email').val());
+        formData.append('bornDate', $('#edit_bornDate').val());
+        formData.append('description', $('#edit_description').val());
+        formData.append('marketPlace', $('#edit_marketPlace').val());
+        formData.append('businessNo', $('#edit_businessNo').val());
+        formData.append('startBusinessTime', $('#edit_startBusinessTime').val());
+        formData.append('endBusinessTime', $('#edit_endBusinessTime').val());
+        formData.append('website', $('#edit_website').val());
+        console.log(formData);
+        // 发送AJAX请求
+        $.ajax({
+            url: '/update_user',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                // 隐藏加载动画
+                $('#loadingOverlay').fadeOut(200);
+                
+                // 显示成功消息
+                alert('个人资料更新成功');
+                
+                // 重定向到用户信息页面
+                window.location.href = '/userinfo?custID=' + $('#edit_custID').val();
+            },
+            error: function(xhr) {
+                // 隐藏加载动画
+                $('#loadingOverlay').fadeOut(200);
+                
+                // 显示错误消息
+                let errorMsg = '更新失败，请稍后再试';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                alert(errorMsg);
+            }
+        });
+    });
+});
+function dataURLtoFile(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr],"image", { type: mime });
+    }
+</script>
+{% endblock %}

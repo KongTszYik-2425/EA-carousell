@@ -17,7 +17,7 @@ app.config['JWT_ALGORITHM'] = 'HS256'
 jwt = JWTManager(app)
 
 
-from application import routes
+from app import routes
 
 
 
