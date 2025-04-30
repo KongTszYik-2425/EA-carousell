@@ -19,5 +19,5 @@
     ],
     "forwardPorts": [5000, 3306],
     "remoteUser": "root",
-    "postCreateCommand": "pip install -r requirements.txt || echo 'No requirements.txt found'"
+    "postCreateCommand": "cd /workspace && pip install -r requirements.txt || echo 'No requirements.txt found' && cd application && python -m flask run --host=0.0.0.0"
 }
