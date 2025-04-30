@@ -5,23 +5,30 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-      args:
-        VARIANT: "3"
-        NODE_VERSION: "none"
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
-    networks:
-      - flask_app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # MySQL服务
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123
+      MYSQL_DATABASE: myapp
+      MYSQL_USER: palk
+      MYSQL_PASSWORD: Admin123
     ports:
-      - "5000:5000" # app port
-      - "5001:5001" # app(debug) port
-      - "3000:3000" # remote debugger attach port
-      
-networks:
-  flask_app:
-    driver: bridge
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "palk", "-pAdmin123"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
 volumes:
-  postgres:
-  pgadmin:
+  mysql-data:
