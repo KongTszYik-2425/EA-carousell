@@ -250,7 +250,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">用户评价 ({{ review_count }})</h5>
                     <div id="review-button-container">
-                        <button class="btn btn-outline-primary" id="writeReviewBtn">
+                        <button class="btn btn-outline-primary" id="writeReviewBtn" style="display: none;">
                             <i class="bi bi-star-fill me-1"></i> 评价该用户
                         </button>
                     </div>
@@ -570,7 +570,7 @@
             }
             if (userData.custID != authUser.custID) {
                 $('.deleteBtn').hide();
-                $('#writeReviewBtn').hide();
+                $('#writeReviewBtn').show();
                 $('#editprofile').hide();
             }
 
