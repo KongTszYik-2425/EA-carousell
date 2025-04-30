@@ -1,39 +1,70 @@
-version: '3'
+version: '3.8'
 
 services:
   app:
-    build: 
+    build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+      args:
+        VARIANT: "3"
+        NODE_VERSION: "none"
     volumes:
-      - ..:/workspace
+      - ..:/workspace:cached
     command: sleep infinity
-    environment:
-      - FLASK_APP=run.py
-      - FLASK_ENV=development
-      - DATABASE_URL=mysql+pymysql://root:password@db/carousell
-    ports:
-      - "5000:5000"
-    depends_on:
-      - db
     networks:
-      - carousell-network
-
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=carousell
+      - flask_app
     ports:
-      - "3306:3306"
+      - "5000:5000" # app port
+      - "5001:5001" # app(debug) port
+      - "3000:3000" # remote debugger attach port
+
+  postgresdb:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
     networks:
-      - carousell-network
+      - flask_app
+    restart: unless-stopped
 
-volumes:
-  mysql-data:
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: 1
+      PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT: 1
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - flask_app
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none' # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+    networks:
+      - flask_app
 
 networks:
-  carousell-network:
+  flask_app:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
