@@ -404,26 +404,19 @@
         return new Blob([u8arr], { type: mime });
     }
     function loginCheck() {
-        const token = localStorage.getItem('access_token');
 
-        if (token) {
-            // 验证token有效性
             $.ajax({
-                url: '/auth/check',
-                type: 'GET',
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                success: function (userData) {
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
                     owner = userData.custID;
                 },
                 error: function () {
                     window.location.href = '/index';
                 }
             });
-        } else {
-            window.location.href = '/index';
-        }
+        
     }
     loginCheck()
 </script>

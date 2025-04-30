@@ -1,5 +1,5 @@
 from application import app
-from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session
+from flask import render_template, redirect, flash, url_for, request, url_for, jsonify,session,make_response
 from application.models import Customer,Category,db,Product,Review
 from flask import request, redirect, url_for, flash, make_response
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token, verify_jwt_in_request, get_jwt
@@ -10,7 +10,7 @@ from datetime import datetime,timedelta,date
 from google.cloud import storage
 import os
 import jwt
-
+import json
 
 
 @app.route("/")
@@ -436,7 +436,7 @@ def product_detail(product_id):
         'description': seller.description,
         'marketPlace': seller.marketPlace,
         'email': seller.email,
-        'avatarUrl': seller.avatarUrl if hasattr(seller, 'avatarUrl') else "https://media.karousell.com/media/photos/profiles/2025/02/22/159713332317728_1740213355_19f2911b.jpg"
+        'avatar': seller.avatar 
     }
 
     product_time = ""
@@ -576,21 +576,32 @@ def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    if not username or not password:
-        return jsonify({"message": "用户名和密码是必需的"}), 400
-
-    customer = Customer.query.filter_by(username=username,password=password).first()
-    if customer:
-        access_token = create_access_token(identity=customer.custID)
-        return jsonify({
-            "message": "登錄成功",
-            "access_token": access_token,
-            "expires_in": 3600  # 有效期秒數
-        }), 200
+    
+    user = Customer.query.filter_by(username=username,password=password).first()
+        # 创建会话数据
+    if user:
+        session_data = {
+            'custID': user.custID,
+            'username': user.username,
+            'is_admin': user.is_admin
+        }
         
+        # 设置cookie，而不是返回token
+        response = make_response(jsonify({'status': 'success', 'message': '登录成功'}))
+        
+        # 设置安全的HTTP-only cookie
+        response.set_cookie(
+            'session', 
+            json.dumps(session_data),
+            httponly=True,  # 防止JavaScript访问
+            secure=False,   # 在生产环境中应设为True，要求HTTPS
+            samesite='Lax', # 防止CSRF攻击
+            max_age=86400   # 24小时过期
+        )
+        
+        return response
     else:
-        print("no")
-        return jsonify({"message": "用户名或密码错误"}), 401
+        return jsonify({'status': 'error', 'message': '用户名或密码错误'}), 401
 
 
 @app.route('/register', methods=['POST'])
@@ -638,22 +649,46 @@ def register():
         return jsonify({"status": "success", "message": "注册成功，请前往登录。"})
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    pass
-
-
-
-
-
-@app.route('/auth/check')
-@jwt_required()
-def check_auth():
+    # 创建响应对象
+    response = make_response(jsonify({'status': 'success', 'message': '登出成功'}))
     
-    user_id = get_jwt_identity()
-    user_data= Customer.get(user_id)
-    # 只要JWT中间件验证通过即返回成功
-    return user_data
+    # 删除会话cookie
+    response.delete_cookie('session')
+    
+    return response
+
+
+
+
+
+@app.route('/auth/check', methods=['GET'])
+def auth_check():
+    # 从cookie中获取会话数据，而不是从请求头获取token
+    session_cookie = request.cookies.get('session')
+    
+    if not session_cookie:
+        return jsonify({'status': 'error', 'message': '未登录'}), 401
+    
+    try:
+        # 解析会话数据
+        session_data = json.loads(session_cookie)
+        custID = session_data.get('custID')
+        
+        # 获取用户信息
+        user =  Customer.getSimple(custID)
+        
+        if not user:
+            return jsonify({'status': 'error', 'message': '用户不存在'}), 401
+        
+        # 返回用户数据
+       
+        
+        return jsonify({'status': 'success', 'userData': user})
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 401
 
 
 
@@ -840,6 +875,7 @@ def product_list():
                 'state': product.state,
                 'owner': customer.custID,
                 'username': customer.username,
+                'user_avatar': customer.avatar,
                 'time_ago': time_ago
             }
         new_results.append(result_item)
@@ -931,10 +967,13 @@ def uploadProduct():
 
 
 @app.route('/delete_product/<int:product_id>', methods=['DELETE'])
-@jwt_required()
 def delete_product(product_id):
     # 获取当前用户ID
-    current_user_id = get_jwt_identity()
+    current_user_id = None
+    try:
+        current_user_id = decodeCookie(request.cookies.get('session'))
+    except Exception as e:
+        return jsonify({'message': f'验证失败: {str(e)}'}), 401    
     # 查询产品
     product = Product.query.get_or_404(product_id)
     # 检查产品是否属于当前用户
@@ -974,9 +1013,13 @@ def user_edit():
     return render_template('userEdit.html')
 
 @app.route('/update_user', methods=['POST'])
-@jwt_required()
 def update_user():
-    current_user_id = get_jwt_identity()
+    
+    current_user_id = None
+    try:
+        current_user_id = decodeCookie(request.cookies.get('session'))
+    except Exception as e:
+        return jsonify({'message': f'验证失败: {str(e)}'}), 401    
     # 查询用户
     user = Customer.query.get_or_404(current_user_id)
     
@@ -1039,9 +1082,14 @@ def change_password_page():
     return render_template('change_password.html')
 
 @app.route('/change_password', methods=['POST'])
-@jwt_required()
 def change_password():
-    current_user_id = get_jwt_identity()
+    print("aaaaaa")
+    current_user_id = None
+    try:
+        current_user_id = decodeCookie(request.cookies.get('session'))
+    except Exception as e:
+        return jsonify({'message': f'验证失败: {str(e)}'}), 401    
+    print(current_user_id)    
     data = request.get_json()
     
     # 查询用户
@@ -1086,9 +1134,12 @@ def write_review():
     return render_template('write_review.html', user=user_data)
 
 @app.route('/submit_review', methods=['POST'])
-@jwt_required()
 def submit_review():
-    current_user_id = get_jwt_identity()
+    current_user_id = None
+    try:
+        current_user_id = decodeCookie(request.cookies.get('session'))
+    except Exception as e:
+        return jsonify({'message': f'验证失败: {str(e)}'}), 401    
     data = request.get_json()
     
     # 获取评价数据
@@ -1320,3 +1371,17 @@ def admin_dashboard():
         today_product_count=today_product_count,
         activities=activities
     )    
+
+def decodeCookie(session_cookie):
+    # session_cookie = request.cookies.get('session')
+    
+    if not session_cookie:
+        return null
+    
+    try:
+        # 解析会话数据
+        session_data = json.loads(session_cookie)
+        current_user_id = session_data.get('custID')
+        return current_user_id
+    except Exception as e:
+        return null      

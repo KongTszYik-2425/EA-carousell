@@ -431,25 +431,22 @@
 <script>
     authUser=null;
     function loginCheck() {
-        const token = localStorage.getItem('access_token');
         
-        if (token) {
+        
             // 验证token有效性
             $.ajax({
-                url: '/auth/check',
-                type: 'GET',
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                success: function (user) {
-                    authUser =user;
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
+                    authUser =userData;
                     initComponent();
                 },
                 error: function () {
                     window.location.href = '/index';
                 }
             });
-        }
+        
     }
     loginCheck();
     // 显示加载动画的函数

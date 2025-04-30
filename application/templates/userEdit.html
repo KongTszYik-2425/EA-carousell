@@ -223,24 +223,13 @@ $(document).ready(function() {
     // 显示加载动画
     $('#loadingOverlay').fadeIn(200);
     
-    // 获取token
-    const token = localStorage.getItem('access_token');
-    
-    if (!token) {
-        alert('请先登录');
-        window.location.href = '/index';
-        return;
-    }
     
     // 验证token并获取用户信息
     $.ajax({
-        url: '/auth/check',
-        type: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token
-        },
-        success: function(userData) {
-            console.log(userData);
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
             // 填充表单数据
             $('#edit_custID').val(userData.custID);
             $('#edit_username').val(userData.username);
@@ -334,9 +323,6 @@ $(document).ready(function() {
             data: formData,
             contentType: false,
             processData: false,
-            headers: {
-                "Authorization": "Bearer " + token
-            },
             success: function(response) {
                 // 隐藏加载动画
                 $('#loadingOverlay').fadeOut(200);

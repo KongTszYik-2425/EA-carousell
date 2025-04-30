@@ -308,38 +308,29 @@
 
 
 
-        const token = localStorage.getItem('access_token');
+        // const token = localStorage.getItem('access_token');
 
-        if (token) {
-            // 验证token有效性
-            $.ajax({
-                url: '/auth/check',
-                type: 'GET',
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                success: function (userData) {
-                    $('#userAvatar').attr('src', userData.avatar)
-                    $('#username').text(userData.username)
-                    $('#profile').attr('href', `/userinfo?custID=${userData.custID}`)
-                    $('.logined-nav').show();
-                    console.log("success")
-                    $('.unlogin-nav').hide();
-                    if(userData.is_admin==1 || userData.is_admin==true){
-                        $('#backend').removeClass('d-none');
-                    }
-                },
-                error: function () {
-                    // token无效时清除存储
-                    localStorage.removeItem('access_token');
-                    $('.logined-nav').hide();
-                    $('.unlogin-nav').show();
+        $.ajax({
+            url: '/auth/check',
+            type: 'GET',
+            success: function (data) {
+                userData = data.userData;
+                $('#userAvatar').attr('src', userData.avatar)
+                $('#username').text(userData.username)
+                $('#profile').attr('href', `/userinfo?custID=${userData.custID}`)
+                $('.logined-nav').show();
+                console.log("success")
+                $('.unlogin-nav').hide();
+                if(userData.is_admin==1 || userData.is_admin==true){
+                    $('#backend').removeClass('d-none');
                 }
-            });
-        } else {
-            $('.logined-nav').hide();
-            $('.unlogin-nav').show();
-        }
+            },
+            error: function () {
+                // 验证失败时显示未登录导航
+                $('.logined-nav').hide();
+                $('.unlogin-nav').show();
+            }
+        });
     });
 
 
@@ -382,8 +373,7 @@
                 password: password
             }),
             success: function (response) {
-                if (response.access_token) {
-                    localStorage.setItem('access_token', response.access_token);
+                if (response) {
                     window.location.reload();
 
                 }
@@ -407,10 +397,15 @@
         }
     }
     function handleLogout() {
-        localStorage.removeItem('access_token');  // 清除localStorage的token
-        sessionStorage.removeItem('access_token'); // 清除sessionStorage的token
-
-        window.location.href = "/";
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (data) {
+                alert(data.message);
+                window.location.href = "/";
+            }
+        });
     }
     $('.dropdown-menu').on("click", function (e) {
         e.stopPropagation();

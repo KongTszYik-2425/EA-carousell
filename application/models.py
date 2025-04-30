@@ -30,7 +30,6 @@ class Customer(db.Model):
     state=db.Column(db.String(10),nullable=False,default='正常',comment='状态')
     products = db.relationship('Product', backref='customer', lazy='dynamic')
 
-    @jwt_required()
     def get(current_user_id):
         user_data = None
         if current_user_id:

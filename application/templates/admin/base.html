@@ -38,13 +38,12 @@
                         <span>&emsp;&emsp;<a href="/admin/users" class="text-white">用户管理</a></span>
                     </div>
                 </div>
-                
+
                 <!-- 添加产品管理菜单项 -->
-                <a href="/admin/products"
-                    class="list-group-item list-group-item-action bg-dark text-white">
+                <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white">
                     <i class="bi bi-box-seam mr-2"></i>产品管理
                 </a>
-                
+
                 <a href="{{ url_for('admin_category') }}"
                     class="list-group-item list-group-item-action bg-dark text-white">
                     <i class="bi bi-folder-fill mr-2"></i>分类管理
@@ -109,37 +108,37 @@
 
         });
 
-        authUser=null;
+        authUser = null;
         function tokenCheck() {
             const token = localStorage.getItem('access_token');
 
-            if (token) {
-                // 验证token有效性
-                $.ajax({
-                    url: '/auth/check',
-                    type: 'GET',
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    },
-                    success: function (userData) {
-                       authUser=userData;
-                    },
-                    error: function () {
-                        // token无效时清除存储
-                        localStorage.removeItem('access_token');
-                        window.location.href = '/index';
-                    }
-                });
-            } else {
-                window.location.href = '/index';
-            }
+
+            // 验证token有效性
+            $.ajax({
+                url: '/auth/check',
+                type: 'GET',
+                success: function (data) {
+                    userData = data.userData;
+                    authUser = userData;
+                },
+                error: function () {
+                    // token无效时清除存储
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/index';
+                }
+            });
         }
         function handleLogout() {
-        localStorage.removeItem('access_token');  // 清除localStorage的token
-        sessionStorage.removeItem('access_token'); // 清除sessionStorage的token
+           $.post({
+                url: '/logout',
+                success: function (data) {
+                    alert(data.message);
+                    window.location.href = "/";
+                }
+            });
 
-        window.location.href = "/";
-    }
+           
+        }
     </script>
 </body>
 
