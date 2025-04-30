@@ -1,17 +1,8 @@
-# 使用 Python 基础镜像
-FROM python:3.9-slim
+ARG VARIANT=3-bullseye
+FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 
-# 设置工作目录
-WORKDIR /app
+ENV PYTHONUNBUFFERED 1
 
-# 复制项目文件到工作目录
-COPY . /app
-
-# 安装项目依赖
-RUN pip install --no-cache-dir -r requirements.txt
-
-# 暴露 Flask 应用的端口
-EXPOSE 5000
-
-# 启动 Flask 应用
-CMD ["python", "app.py"]
+COPY requirements.txt /tmp/pip-tmp/
+RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+   && rm -rf /tmp/pip-tmp
