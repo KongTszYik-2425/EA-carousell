@@ -1,5 +1,6 @@
-Config.py文件设置数据源
+Config.py文件设置数据源(Optional)
 
+先使用migrate更新数据
 
 由于使用Google Cloud存储桶
 
